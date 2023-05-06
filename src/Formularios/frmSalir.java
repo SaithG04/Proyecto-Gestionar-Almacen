@@ -6,15 +6,13 @@ import javax.swing.JButton;
  *
  * @author isai_
  */
-public class frmSalir extends javax.swing.JFrame {
+public class frmSalir extends javax.swing.JDialog {
 
     /**
      * Creates new form frmSalir
      */
     public frmSalir() {
         initComponents();
-//        this.setLocationRelativeTo(null);
-//        this.setResizable(false);
     }
 
     /**
@@ -32,7 +30,7 @@ public class frmSalir extends javax.swing.JFrame {
         btnConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 

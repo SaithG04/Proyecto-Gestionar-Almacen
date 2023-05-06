@@ -1,36 +1,11 @@
 package Formularios;
 
-import Clases.cAdministradorProveedores;
-import java.awt.Color;
-import java.sql.*;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import Metodos.mGenerales;
+import java.awt.Image;
+import javax.swing.*;
 
 public class frmAdministradorProveedores extends javax.swing.JFrame {
 
-    //Variables globales
-    cAdministradorProveedores oProveedores = new cAdministradorProveedores();
-//    cLogueo oLogueo = new cLogueo();
-    DefaultTableModel modelo = new DefaultTableModel();
-    ; //modelo de la clase default
-    ResultSet rsProveedores, rsDepartamentos, rsNumDep, rsRespuesta;
-    Object[] c = new Object[1];
-    ArrayList<String> arraicito = new ArrayList<>();
-
-    //Constructor
     public frmAdministradorProveedores() {
         initComponents();
     }
@@ -80,19 +55,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         btnLimpiar.setText("LIMPIAR");
         btnLimpiar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnLimpiar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnLimpiar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnLimpiarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnLimpiarMouseExited(evt);
-            }
-        });
-        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimpiarActionPerformed(evt);
-            }
-        });
         jPanel2.add(btnLimpiar, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 60, 146, 42));
 
         jLabel1.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
@@ -110,22 +72,13 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         txtId.setBackground(new java.awt.Color(0, 51, 102));
         txtId.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtId.setForeground(new java.awt.Color(255, 255, 255));
+        txtId.setEnabled(false);
         txtId.setName(""); // NOI18N
-        txtId.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtIdKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 29, 113, 30));
 
         txtRazonSocial.setBackground(new java.awt.Color(0, 51, 102));
         txtRazonSocial.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtRazonSocial.setForeground(new java.awt.Color(255, 255, 255));
-        txtRazonSocial.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRazonSocialKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtRazonSocial, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, 402, -1));
 
         jLabel6.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
@@ -137,11 +90,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         txtRUC.setBackground(new java.awt.Color(0, 51, 102));
         txtRUC.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtRUC.setForeground(new java.awt.Color(255, 255, 255));
-        txtRUC.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRUCKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtRUC, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, 210, -1));
 
         jLabel4.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
@@ -152,11 +100,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         txtDireccion.setBackground(new java.awt.Color(0, 51, 102));
         txtDireccion.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtDireccion.setForeground(new java.awt.Color(255, 255, 255));
-        txtDireccion.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtDireccionKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtDireccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 150, 402, 29));
 
         jLabel3.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
@@ -186,21 +129,11 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         txtContacto.setBackground(new java.awt.Color(0, 51, 102));
         txtContacto.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtContacto.setForeground(new java.awt.Color(255, 255, 255));
-        txtContacto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtContactoKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtContacto, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 190, 402, -1));
 
         txtTelefono.setBackground(new java.awt.Color(0, 51, 102));
         txtTelefono.setFont(new java.awt.Font("Dubai", 0, 15)); // NOI18N
         txtTelefono.setForeground(new java.awt.Color(255, 255, 255));
-        txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtTelefonoKeyTyped(evt);
-            }
-        });
         jPanel2.add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 230, 210, -1));
 
         txtEmail.setBackground(new java.awt.Color(0, 51, 102));
@@ -221,19 +154,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         btnAgregar.setText("INSERTAR");
         btnAgregar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnAgregar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnAgregarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnAgregarMouseExited(evt);
-            }
-        });
-        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAgregarActionPerformed(evt);
-            }
-        });
         jPanel2.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 110, 146, 40));
 
         btnModificar.setBackground(new java.awt.Color(0, 102, 255));
@@ -243,19 +163,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         btnModificar.setText("MODIFICAR");
         btnModificar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnModificar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnModificar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnModificarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnModificarMouseExited(evt);
-            }
-        });
-        btnModificar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnModificarActionPerformed(evt);
-            }
-        });
         jPanel2.add(btnModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 160, 146, 42));
 
         btnEliminar.setBackground(new java.awt.Color(0, 102, 255));
@@ -265,19 +172,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         btnEliminar.setText("ELIMINAR");
         btnEliminar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnEliminarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnEliminarMouseExited(evt);
-            }
-        });
-        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEliminarActionPerformed(evt);
-            }
-        });
         jPanel2.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 210, 146, 42));
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 102));
@@ -315,16 +209,6 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
         jtbProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jtbProveedores.setSelectionBackground(new java.awt.Color(153, 255, 153));
         jtbProveedores.setSelectionForeground(new java.awt.Color(0, 0, 0));
-        jtbProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jtbProveedoresMouseClicked(evt);
-            }
-        });
-        jtbProveedores.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jtbProveedoresKeyReleased(evt);
-            }
-        });
         jScrollPane1.setViewportView(jtbProveedores);
         if (jtbProveedores.getColumnModel().getColumnCount() > 0) {
             jtbProveedores.getColumnModel().getColumn(0).setMinWidth(40);
@@ -367,315 +251,11 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    //Eventos
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-
-        if (Validar() == true && CompararClave() == true) {
-            try {
-                oProveedores.setIdProveedor(Integer.parseInt(txtId.getText()));
-                oProveedores.setRazonSocial(txtRazonSocial.getText());
-                oProveedores.setRuc(txtRUC.getText());
-                oProveedores.setDireccion(txtDireccion.getText());
-                oProveedores.setContacto(txtContacto.getText());
-                oProveedores.setTelefono(txtTelefono.getText());
-                oProveedores.setEmail(txtEmail.getText());
-                oProveedores.setDepartamento(cboDepartamento.getSelectedItem().toString());
-                oProveedores.Insertar();
-
-                rsNumDep = oProveedores.ObtNumDep();
-                while (rsNumDep.next()) {
-                    c[0] = rsNumDep.getInt("Num_Proveedores");
-                    oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) + 1);
-                    oProveedores.ActDep();
-                }
-                JOptionPane.showMessageDialog(null, "El proveedor se ha agregado correctamente.");
-//                Mostrar();
-                Limpiar();
-            } catch (SQLException | ClassNotFoundException ex) {
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(null, "Error al agregar.");
-                System.out.println(ex);
-            }
-        }
-    }//GEN-LAST:event_btnAgregarActionPerformed
-    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
-        Limpiar();
-    }//GEN-LAST:event_btnLimpiarActionPerformed
-    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-
-        if (Conf() == true) {
-            int fila = jtbProveedores.getSelectedRow();
-            String dep = jtbProveedores.getValueAt(fila, 7).toString();
-            if (Validar() == true) {
-                try {
-                    oProveedores.setIdProveedor(Integer.parseInt(txtId.getText()));
-                    oProveedores.setRazonSocial(txtRazonSocial.getText());
-                    oProveedores.setRuc(txtRUC.getText());
-                    oProveedores.setDireccion(txtDireccion.getText());
-                    oProveedores.setContacto(txtContacto.getText());
-                    oProveedores.setTelefono(txtTelefono.getText());
-                    oProveedores.setEmail(txtEmail.getText());
-                    oProveedores.setDepartamento(dep);
-                    if (!(dep.equalsIgnoreCase(cboDepartamento.getSelectedItem().toString()))) {
-
-                        rsNumDep = oProveedores.ObtNumDep();
-                        while (rsNumDep.next()) {
-                            c[0] = rsNumDep.getInt("Num_Proveedores");
-                            oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) - 1);
-                            oProveedores.ActDep();
-                        }
-                        oProveedores.setDepartamento(cboDepartamento.getSelectedItem().toString());
-                        rsNumDep = oProveedores.ObtNumDep();
-                        while (rsNumDep.next()) {
-                            c[0] = rsNumDep.getInt("Num_Proveedores");
-                            oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) + 1);
-                            oProveedores.ActDep();
-                        }
-                    } else {
-                        oProveedores.setDepartamento(dep);
-                    }
-                    oProveedores.Modificar();
-//                    Mostrar();
-                    Limpiar();
-                    JOptionPane.showMessageDialog(null, "Modificado con éxito.");
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(null, "Error al modificar.");
-                    System.err.println(ex);
-                }
-            }
-        }
-    }//GEN-LAST:event_btnModificarActionPerformed
-    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
-        if (Conf() == true) {
-            Toolkit.getDefaultToolkit().beep();
-            String opciones[] = {"Sí", "No"};
-            int s = JOptionPane.showOptionDialog(
-                    null,
-                    "¿Está seguro de eliminar?",
-                    " Confirmación",
-                    JOptionPane.YES_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, this);
-            if (s == 0) {
-                try {
-                    int fila = jtbProveedores.getSelectedRow();
-                    oProveedores.setIdProveedor(Integer.parseInt(jtbProveedores.getValueAt(fila, 0).toString()));
-                    oProveedores.setDepartamento(jtbProveedores.getValueAt(fila, 7).toString());
-                    rsNumDep = oProveedores.ObtNumDep();
-
-                    while (rsNumDep.next()) {
-                        c[0] = rsNumDep.getInt("Num_Proveedores");
-                        oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) - 1);
-                        oProveedores.ActDep();
-                    }
-                    oProveedores.Eliminar();
-                    oProveedores.setRazonSocial(jtbProveedores.getValueAt(fila, 1).toString());
-                    oProveedores.EliminarDePrecio();
-//                        Mostrar();
-                    Limpiar();
-                    JOptionPane.showMessageDialog(null, "El proveedor ha sido eliminado correctamente.");
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(null, "Error al eliminar");
-                    System.err.println(ex);
-                }
-            }
-
-        }
-    }//GEN-LAST:event_btnEliminarActionPerformed
-    private void jtbProveedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtbProveedoresMouseClicked
-        try {
-            Seleccionar();
-        } catch (ClassNotFoundException ex) {
-            System.err.println(ex);
-        }
-    }//GEN-LAST:event_jtbProveedoresMouseClicked
-    private void txtIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdKeyTyped
-        char dig = evt.getKeyChar();
-        if ((((dig < '0') || (dig > '9')) && (dig != '\b' /*Barra espaciadora*/)) || txtId.getText().length() == 5) {
-            evt.consume();  // ignorar el evento de teclado
-        }
-    }//GEN-LAST:event_txtIdKeyTyped
-    private void txtTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTelefonoKeyTyped
-        char dig = evt.getKeyChar();
-        if ((((dig < '0') || (dig > '9')) && (dig != '\b')) || txtTelefono.getText().length() == 9) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtTelefonoKeyTyped
-    private void txtContactoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContactoKeyTyped
-        char dig = evt.getKeyChar();
-        //Si la primera letra es de un dígito o mide a 200 caráteres
-        if (Character.isDigit(dig) == true || txtContacto.getText().length() == 200) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtContactoKeyTyped
-    private void txtRazonSocialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRazonSocialKeyTyped
-        if (txtRazonSocial.getText().length() == 30) {
-            evt.consume();//nombre del evento  y consume bloquea el teclado después de llegar al tamaño indicado
-        }
-    }//GEN-LAST:event_txtRazonSocialKeyTyped
-    private void txtDireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyTyped
-        if (txtDireccion.getText().length() == 50) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtDireccionKeyTyped
-    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseEntered
-        btnAgregar.setBackground(new Color(255, 204, 102));
-    }//GEN-LAST:event_btnAgregarMouseEntered
-    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseExited
-        btnAgregar.setBackground(new Color(0, 102, 255));
-    }//GEN-LAST:event_btnAgregarMouseExited
-    private void btnLimpiarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLimpiarMouseEntered
-        btnLimpiar.setBackground(new Color(255, 204, 102));
-    }//GEN-LAST:event_btnLimpiarMouseEntered
-    private void btnLimpiarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLimpiarMouseExited
-        btnLimpiar.setBackground(new Color(0, 102, 255));
-    }//GEN-LAST:event_btnLimpiarMouseExited
-    private void btnModificarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseEntered
-        btnModificar.setBackground(new Color(255, 204, 102));
-    }//GEN-LAST:event_btnModificarMouseEntered
-    private void btnModificarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseExited
-        btnModificar.setBackground(new Color(0, 102, 255));
-    }//GEN-LAST:event_btnModificarMouseExited
-    private void btnEliminarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseEntered
-        btnEliminar.setBackground(new Color(255, 204, 102));
-    }//GEN-LAST:event_btnEliminarMouseEntered
-    private void btnEliminarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseExited
-        btnEliminar.setBackground(new Color(0, 102, 255));
-    }//GEN-LAST:event_btnEliminarMouseExited
-    private void txtRUCKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRUCKeyTyped
-        char dig = evt.getKeyChar();
-        if ((((dig < '0') || (dig > '9')) && (dig != '\b')) || txtRUC.getText().length() == 11) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtRUCKeyTyped
-    private void jtbProveedoresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtbProveedoresKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_UP) {
-            try {
-                Seleccionar();
-            } catch (ClassNotFoundException ex) {
-                System.out.println(ex);
-            }
-        }
-    }//GEN-LAST:event_jtbProveedoresKeyReleased
-
-    //Métodos
-    private void Seleccionar() throws ClassNotFoundException {
-        int fila = jtbProveedores.getSelectedRow();
-        if (Conf() == true) {
-            try {
-                EncontrarDepartamento();
-                txtId.setText(jtbProveedores.getValueAt(fila, 0).toString());
-                txtRazonSocial.setText(jtbProveedores.getValueAt(fila, 1).toString());
-                txtRUC.setText(jtbProveedores.getValueAt(fila, 2).toString());
-                txtDireccion.setText(jtbProveedores.getValueAt(fila, 3).toString());
-                txtContacto.setText(jtbProveedores.getValueAt(fila, 4).toString());
-                txtTelefono.setText(jtbProveedores.getValueAt(fila, 5).toString());
-                txtEmail.setText(jtbProveedores.getValueAt(fila, 6).toString());
-            } catch (SQLException ex) {
-                Toolkit.getDefaultToolkit().beep();
-                String b[] = {"Aceptar"};
-                String e = "com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure\n"
-                        + "\n"
-                        + "The last packet sent successfully to the server was 0 milliseconds ago. "
-                        + "The driver has not received any packets from the server.";
-
-                if (e.equals(ex.toString())) {
-                    JOptionPane.showOptionDialog(null,
-                            " Desconexión de la Base de Datos.", "  Error", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30),
-                            b, b[0]);
-                    frmLogueo oFLogueo = new frmLogueo();
-                    oFLogueo.setVisible(true);
-                    dispose();
-                } else {
-                    System.err.println(ex);
-                }
-            }
-        }
+    @Override
+    public Image getIconImage() {
+       //Icono del programa
+       return mGenerales.IMG;
     }
-
-    private boolean CompararClave() {
-        //En caso no quiera usar id incrementable
-        int fila = jtbProveedores.getRowCount();
-        int i;
-        boolean b = true;
-        String[] valores = new String[fila];
-        for (i = 0; i < fila; i++) {
-            valores[i] = jtbProveedores.getValueAt(i, 0).toString();
-            if (valores[i].equals(txtId.getText())) {
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(null, "El proveedor ya existe.");
-                b = false;
-                i = fila;
-            }
-        }
-        return b;
-    }
-
-//    private void EncontrarDepartamento() throws SQLException, ClassNotFoundException{   
-//        String fila = jtbProveedores.getValueAt(jtbProveedores.getSelectedRow(), 7).toString();
-//        String[] depart = new String[25];
-//        rsDepartamentos = oProveedores.ListarDepartamentos();
-//        for (int i=0; rsDepartamentos.next();i++) {
-//            depart[i] = rsDepartamentos.getString("Departamento");
-//            if(depart[i].equals(fila)){
-//                cboDepartamento.setSelectedIndex(i);
-//            }
-//        }
-//    } 
-//    public final void MostrarDepartamentos(){
-//        try {
-//            rsDepartamentos = oProveedores.ListarDepartamentos();      
-//             while (rsDepartamentos .next()) {  
-//                cboDepartamento.addItem(rsDepartamentos.getString("Departamento"));
-//            }
-//            cboDepartamento.setSelectedItem(null);
-//          }
-//        catch (SQLException|ClassNotFoundException ex) {
-//            System.err.println(ex);
-//        }
-//    }
-//    public final void Close(){
-//        addWindowListener(new WindowAdapter(){
-//            @Override
-//            public void windowClosing(WindowEvent evt){
-//                String RS,R,D,C,T,E,P;
-//                RS = txtRazonSocial.getText();
-//                R = txtRUC.getText();
-//                D = txtDireccion.getText();
-//                C = txtContacto.getText();
-//                T = txtTelefono.getText();        
-//                E = txtEmail.getText();
-//                
-//                if(!RS.isEmpty()||!R.isEmpty()||!D.isEmpty()||!C.isEmpty()||!T.isEmpty()||!E.isEmpty()){
-//                    Toolkit.getDefaultToolkit().beep();
-//                    String b[] = {"Aceptar","Cancelar"};
-//                    int e = JOptionPane.showOptionDialog(null,
-//                        " ¿Salir sin guardar?"," Confirmar", JOptionPane.DEFAULT_OPTION,
-//                        JOptionPane.PLAIN_MESSAGE,icono("/Resources/den.png",30,30), 
-//                        b, b[1]);
-//                    if(e==0){
-//                        frmAdministrador oFA = new frmAdministrador();
-//                        oFA.setVisible(true);
-//                        dispose();
-//                    }
-//                }else{
-//                    frmAdministrador oFA = new frmAdministrador();
-//                    oFA.setVisible(true);
-//                    dispose();
-//                } 
-//            }
-//        }); 
-//    }
-    public Icon icono(String url, int width, int height) {
-        //Método para obtener atributos de la imagen como "Icon".
-        Icon ic = new ImageIcon(new ImageIcon(this.getClass().getResource(url))
-                .getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
-        return ic;
-    }
-
     public JComboBox<String> getCboDepartamento() {
         return cboDepartamento;
     }

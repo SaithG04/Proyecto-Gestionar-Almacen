@@ -72,7 +72,7 @@ public class mRegistroUsuarios extends mGenerales {
                         try {
                             oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                     String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                            JOptionPane.showMessageDialog(null, "Inicie sesión nuevamente");                            
+                            JOptionPane.showMessageDialog(null, "Inicie sesión nuevamente");
                             Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER);
                             ModificarAdmin();
                             fru.dispose();
@@ -83,7 +83,7 @@ public class mRegistroUsuarios extends mGenerales {
                     } else {
                         oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                 String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        oA.aviso("Correcto");                        
+                        oA.aviso("Correcto");
                         fru.dispose();
                         new mGestionarUsuarios().CargarFrame();
                     }
@@ -96,7 +96,7 @@ public class mRegistroUsuarios extends mGenerales {
                         Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER);
                         oA.aviso("Correcto");
                         fru.dispose();
-                        new mGestionarUsuarios().CargarFrame();                      
+                        new mGestionarUsuarios().CargarFrame();
                     } catch (ClassNotFoundException | SQLException ex) {
                         oA.error("Incorrecto", ex.toString());
                     }
@@ -326,22 +326,16 @@ public class mRegistroUsuarios extends mGenerales {
             public void windowClosing(WindowEvent evt) {
 
                 if (IfNotEmpty()) {
-                    if (oA.confCerrar(" ¿Cerrar?") == 0) {
-                        if (aceptar.getText().equalsIgnoreCase("registrar")) {
-                            new mAdministrador().CargarFrame();
-                            fru.dispose();
-                        } else {
-                            new mGestionarUsuarios().CargarFrame();
-                            fru.dispose();
-                        }
+                    if (aceptar.getText().equalsIgnoreCase("registrar")) {
+                        oA.confCerrar(fru, "administrador");
+                    } else {
+                        oA.confCerrar(fru, "gestUsuarios");
                     }
                 } else {
                     if (aceptar.getText().equalsIgnoreCase("registrar")) {
-                        new mAdministrador().CargarFrame();
-                        fru.dispose();
+                        oA.confCerrar(fru, "administrador");
                     } else {
-                        new mGestionarUsuarios().CargarFrame();
-                        fru.dispose();
+                        oA.confCerrar(fru, "gestUsuarios");
                     }
                 }
             }

@@ -3,19 +3,16 @@ package Metodos;
 import Clases.*;
 import Formularios.*;
 import java.awt.event.*;
-import java.sql.*;
 import javax.swing.*;
 
 /**
  *
  * @author isai_
  */
-public class mLogueo extends mGenerales implements ActionListener{
+public class mLogueo extends mGenerales implements ActionListener {
 
     public static cLogueo oL;
     private final cAlertas oAlerta = new cAlertas();
-    private PreparedStatement st;
-    private ResultSet rs;
     private final frmLogueo logueo;
 
     private final JButton btnAceptar, btnRecuperar;
@@ -51,49 +48,48 @@ public class mLogueo extends mGenerales implements ActionListener{
             txtContrasena.setText(null);
             oAlerta.faltanDatos();
         } else {
-            try {
-                Connection con = Conectar();
-                st = con.prepareStatement("Select username from usuarios where username= '" + user + "'");
-                rs = st.executeQuery();
-                if (rs.next()) { //Validar usuario
-                    st = con.prepareStatement("Select contraseña from usuarios where username= '" + user + "' and contraseña= '" + contrasena + "'");
-                    rs = st.executeQuery();
-                    if (rs.next()) { //Validar contraseña
-                        st = con.prepareStatement("Select tipo_usuario from usuarios where username = '" + user + "'");
-                        rs = st.executeQuery();
-                        while (rs.next()) { //Verificar permisos de cuenta
-                            String tu = rs.getString("tipo_usuario");
-                            if (tu.equals("administrador")) {
-                                oL = new cLogueo(user, contrasena);                            
-                                logueo.dispose();
-                                new mAdministrador().CargarFrame();
-                            } else {
-                                oL = new cLogueo(user, contrasena);                               
-                                logueo.dispose();
-//                                new frmUsuarioProveedores().setVisible(true);
-                            }
-                        }
-                    } else {
-                        txtContrasena.requestFocus();
-                        txtContrasena.setText(null);
-                        oAlerta.error(" Contraseña incorrecta.\n" + " Verifique nuevamente.", "");
-                    }
-                } else {
+            oL = new cLogueo();
+            String iniciarSesion = oL.iniciarSesion(user, contrasena);
+            switch (iniciarSesion) {
+                case "correctoAdmin":
+                    oL = new cLogueo(user, contrasena);
+                    logueo.dispose();
+                    new mAdministrador().CargarFrame();
+                    break;
+                case "correctoUser":
+                    oL = new cLogueo(user, contrasena);
+                    logueo.dispose();
+//                    new frmUsuarioProveedores().setVisible(true);
+                    break;
+                case " Contraseña incorrecta.\n Verifique nuevamente.":
+                    txtContrasena.requestFocus();
+                    txtContrasena.setText(null);
+                    oAlerta.error(" Contraseña incorrecta.\n" + " Verifique nuevamente.", "");
+                    break;
+                case "El usuario no existe.":
                     txtUsuario.requestFocus();
                     txtContrasena.setText(null);
                     oAlerta.error("El usuario no existe.", "");
-                }
-            } catch (ClassNotFoundException | SQLException ex) { //Error de conexión u otro
-                txtUsuario.setText(null);
-                txtContrasena.setText(null);
-                txtUsuario.requestFocus();
-                oAlerta.errorC(ex.toString());
+                    break;
+                default:
+                    txtUsuario.setText(null);
+                    txtContrasena.setText(null);
+                    txtUsuario.requestFocus();
+                    oAlerta.errorC(iniciarSesion);
+                    break;
             }
         }
     }
 
     @Override
-    public final void Close() {}
+    public final void Close() {
+        logueo.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                System.exit(0);
+            }
+        });
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -108,5 +104,6 @@ public class mLogueo extends mGenerales implements ActionListener{
         logueo.setLocationRelativeTo(null);
         btnAceptar.addActionListener(this);
         ClickEnter();
+        Close();
     }
 }

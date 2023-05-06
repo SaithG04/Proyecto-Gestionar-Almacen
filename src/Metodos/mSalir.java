@@ -1,47 +1,74 @@
 package Metodos;
 
-import Formularios.frmAdministradorProveedores;
 import Formularios.frmSalir;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 
 /**
  *
  * @author isai_
  */
 public class mSalir {
-    
+
     private final frmSalir os;
     private final JButton btnClose, btnConfirmar;
-    private final frmAdministradorProveedores fap;
+    public static boolean value = false;
+    private final JFrame frmI;
+    private final String frame;
 
-    public mSalir(frmAdministradorProveedores fap) {
+    public mSalir(JFrame frmI, String frame) {
+        this.frmI = frmI;
+        this.frame = frame;
         os = new frmSalir();
         btnClose = os.getBtnClose();
         btnConfirmar = os.getBtnConfirmar();
-        this.fap = fap;
     }
-    
-    public void CargarFrame(){
+
+    public JButton getBtnClose() {
+        return btnClose;
+    }
+
+    public JButton getBtnConfirmar() {
+        return btnConfirmar;
+    }
+
+    public void CargarFrame() {
         os.setVisible(true);
+        os.setLocationRelativeTo(null);
+        os.setResizable(false);
+        Toolkit.getDefaultToolkit().beep();
         Clicks();
     }
-    
-    void Clicks(){
+
+    void Clicks() {
         btnClose.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
-                os.dispose(); 
+            public void mouseClicked(MouseEvent e) {
+                os.dispose();
             }
         });
         btnConfirmar.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
-                fap.dispose();
-                new mAdministrador().CargarFrame();
+            public void mouseClicked(MouseEvent e) {
+                frmI.dispose();
+                os.dispose();
+                switch (frame) {
+                    case "administrador":
+                        new mAdministrador().CargarFrame();
+                        break;
+                    case "sistema":
+                        System.exit(0);
+                    case "gestUsuarios":
+                        new mGestionarUsuarios().CargarFrame();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
-    
+
 }

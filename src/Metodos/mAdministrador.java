@@ -17,6 +17,7 @@ public class mAdministrador extends mGenerales {
     private final frmAdministrador a;
     private final JLabel lblUsuario;
     private final JButton btnCerrarSesion, btnGestionarUsuarios, btnNuevoUsuario, btnProductos, btnProveedores;
+    boolean value = false;
 
     public mAdministrador() {
         a = new frmAdministrador();
@@ -43,9 +44,7 @@ public class mAdministrador extends mGenerales {
         a.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if (oA.confCerrar(" ¿Cerrar?") == 0) {
-                    System.exit(0);
-                }
+                if(!value) oA.confCerrar(a, "sistema");
             }
         });
     }
@@ -54,9 +53,11 @@ public class mAdministrador extends mGenerales {
         btnCerrarSesion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (oA.confCerrar(" ¿Cerrar?") == 0) {
+                if(oA.confirmación("¿Cerrar sesión?") == 0){
+                    value = true;
                     a.dispose();
                     new mLogueo().CargarFrame();
+                    value = false;
                 }
             }
         });
@@ -78,7 +79,7 @@ public class mAdministrador extends mGenerales {
             public void mouseClicked(MouseEvent evt) {
                 if (ComprobarConexion()) {
                     a.dispose();
-//                    new frmAdministradorProveedores().setVisible(true);             
+                    new mProveedores().CargarFrame();
                 } else {
                     new mLogueo().CargarFrame();
                     a.dispose();

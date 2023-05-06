@@ -1,6 +1,7 @@
 package Clases;
 
 import Metodos.mGenerales;
+import Metodos.mSalir;
 import java.awt.Toolkit;
 import javax.swing.*;
 
@@ -16,7 +17,6 @@ public class cAlertas extends mGenerales{
             = "com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure\n"
             + "\nThe last packet sent successfully to the server was 0 milliseconds ago. "
             + "The driver has not received any packets from the server."; //Mensaje por defecto de error de conexion
-//    private final mGenerales oG = new mGenerales();
 
     public void error(String mensaje, String error) {
         Toolkit.getDefaultToolkit().beep();
@@ -47,12 +47,16 @@ public class cAlertas extends mGenerales{
                 JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b, b[0]);
     }
 
-    public int confCerrar(String mensaje) {
-        Toolkit.getDefaultToolkit().beep();
-        return JOptionPane.showOptionDialog(null, " ¿Cerrar?", " Confirmar", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b2, b2[1]);
+    public void confCerrar(JFrame frm, String frame) {
+        new mSalir(frm,frame).CargarFrame();
     }
 
+    public int confirmación(String txt) {
+        Toolkit.getDefaultToolkit().beep();
+        return JOptionPane.showOptionDialog(null, txt, " Confirmar", JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b2, b2[1]);
+    }
+    
     @Override
     public void CargarFrame() {}
 

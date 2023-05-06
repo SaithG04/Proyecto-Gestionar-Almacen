@@ -29,20 +29,16 @@ public class frmLogueo extends javax.swing.JFrame {
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
-        try {
-            txtUsuario =(javax.swing.JTextField)java.beans.Beans.instantiate(getClass().getClassLoader(), "Formularios.frmLogueo_txtUsuario");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-        }
+        txtUsuario = new javax.swing.JTextField();
+        txtUsuario.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtUsuario = new javax.swing.JTextField();
         txtContraseña = new javax.swing.JPasswordField();
         btnRecuperar = new javax.swing.JButton();
         btnAceptar = new javax.swing.JButton();
         javax.swing.JPanel fondo = new javax.swing.JPanel();
         javax.swing.JLabel lbl_fondo = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Acceder");
         setIconImage(getIconImage());
         setResizable(false);
@@ -65,6 +61,9 @@ public class frmLogueo extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Copperplate Gothic Light", 1, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("contraseña:");
+
+        txtUsuario.setBackground(new java.awt.Color(102, 153, 255));
+        txtUsuario.setForeground(new java.awt.Color(0, 0, 0));
 
         txtContraseña.setBackground(new java.awt.Color(102, 153, 255));
         txtContraseña.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N

@@ -163,7 +163,7 @@ public class mGestionarUsuarios extends mGenerales {
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
                     if (Conectado()) {
 
-                        if (oA.confCerrar("¿Está seguro de eliminar?") == 0) {
+                        if (oA.confirmación("¿Eliminar usuario?") == 0) {
                             try {
                                 EliminarUsuario();
                                 oA.aviso("Usuario eliminado.");
