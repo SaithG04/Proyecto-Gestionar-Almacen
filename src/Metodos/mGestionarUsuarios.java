@@ -1,11 +1,10 @@
 package Metodos;
 
+import Clases.cAdministradorProveedores;
 import Clases.cAlertas;
 import Formularios.*;
 import java.awt.event.*;
-import java.sql.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -14,10 +13,11 @@ import javax.swing.table.DefaultTableModel;
 public class mGestionarUsuarios extends mGenerales {
 
     private final cAlertas oA = new cAlertas();
-    private Connection con;
-    private Statement st;
-    private ResultSet rs, rsUsuarios;
-    private DefaultTableModel modelo;
+    private final cAdministradorProveedores oAP = new cAdministradorProveedores();
+//    private Connection con;
+//    private Statement st;
+//    private ResultSet rs, rsUsuarios;
+//    private DefaultTableModel modelo;
     private mRegistroUsuarios ru;
     private final frmAdministradorGestionarUsuarios fagu;
     private final JTable usuarios;
@@ -42,23 +42,6 @@ public class mGestionarUsuarios extends mGenerales {
                 }
             }
         });
-    }
-
-    public ResultSet ListaUsuarios() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from usuarios");
-
-        return rs;
-    }
-
-    public void EliminarUsuario() throws ClassNotFoundException, SQLException {
-        String user = usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString();
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.execute("DROP USER '" + user + "'@'%'");
-        st.executeUpdate("DELETE FROM usuarios WHERE username='" + user + "'");
     }
 
     public void Modificar() {
@@ -89,35 +72,6 @@ public class mGestionarUsuarios extends mGenerales {
         ru.fru.setTitle("Modificar usuarios");
     }
 
-    public void Mostrar() {
-
-        try {
-            rsUsuarios = ListaUsuarios();
-            Object[] usuariosArray = new Object[8];
-            modelo = (DefaultTableModel) usuarios.getModel();
-
-            modelo.setRowCount(0);
-            while (rsUsuarios.next()) {
-                usuariosArray[0] = rsUsuarios.getInt("id_usuario");
-                usuariosArray[1] = rsUsuarios.getString("nombres");
-                usuariosArray[2] = rsUsuarios.getString("apellidos");
-                usuariosArray[3] = rsUsuarios.getString("username");
-                usuariosArray[5] = rsUsuarios.getString("tipo_usuario");
-                usuariosArray[6] = rsUsuarios.getLong("telefono");
-                usuariosArray[7] = rsUsuarios.getString("correo");
-                int length = rsUsuarios.getString("contraseña").length();
-                usuariosArray[4] = "";
-                for (int i = 0; i < length; i++) {
-                    usuariosArray[4] = usuariosArray[4] + "*";
-                }
-                modelo.addRow(usuariosArray); //Va adheriendo en nuestro DefaultTableModel "modelo"
-            }
-            usuarios.setModel(modelo); //aqui va enviar los datos de "modelo" a nuestra jtbUsuarios
-        } catch (SQLException | ClassNotFoundException ex) {
-            oA.errorC(ex.toString());
-        }
-    }
-
     public final void Opciones() {
         JMenuItem upd = new JMenuItem("Modificar");
         JMenuItem dlt = new JMenuItem("Eliminar");
@@ -131,7 +85,7 @@ public class mGestionarUsuarios extends mGenerales {
             if (usuarios.getSelectedRow() != -1) {
 
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (Conectado()) {                       
+                    if (oAP.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -141,7 +95,7 @@ public class mGestionarUsuarios extends mGenerales {
                         fagu.dispose();
                     }
                 } else {
-                    if (Conectado()) {
+                    if (oAP.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -161,16 +115,12 @@ public class mGestionarUsuarios extends mGenerales {
         dlt.addActionListener((ActionEvent e) -> {
             if (usuarios.getSelectedRow() != -1) {
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (Conectado()) {
-
+                    if (oAP.Conectado()) {
                         if (oA.confirmación("¿Eliminar usuario?") == 0) {
-                            try {
-                                EliminarUsuario();
-                                oA.aviso("Usuario eliminado.");
-                                Mostrar();
-                            } catch (ClassNotFoundException | SQLException ex) {
-                                oA.error("Error al eliminar", ex.toString());
-                            }
+                            String user = usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString();
+                            oAP.EliminarUsuario(user);
+                            oA.aviso("Usuario eliminado.");
+                            oAP.MostrarUsuarios(usuarios.getModel());
                         }
                     } else {
                         new mLogueo().CargarFrame();
@@ -183,17 +133,6 @@ public class mGestionarUsuarios extends mGenerales {
                 oA.error("Seleccione una fila primero.", "");
             }
         });
-    }
-
-    private boolean Conectado() {
-
-        try {
-            Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.toString());
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -212,7 +151,7 @@ public class mGestionarUsuarios extends mGenerales {
         fagu.setVisible(true);
         fagu.setLocationRelativeTo(null);
         Close();
-        Mostrar();
+        oAP.MostrarUsuarios(usuarios.getModel());
         Opciones();
         dobleClick();
     }

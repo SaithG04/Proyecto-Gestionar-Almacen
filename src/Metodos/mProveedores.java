@@ -6,7 +6,6 @@ import Formularios.*;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.*;
-import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,13 +16,10 @@ import javax.swing.table.DefaultTableModel;
 public class mProveedores extends mGenerales {
     
     private final cAlertas oA = new cAlertas();
-    Connection con;//Conectar a la base de datos
-    Statement st;
-    ResultSet rs;
-    PreparedStatement psInsertar = null;
+    
     private DefaultTableModel modelo;
     cAdministradorProveedores oProveedores = new cAdministradorProveedores();
-    ResultSet rsProveedores, rsDepartamentos, rsNumDep;
+   
     Object[] c = new Object[1];
     
     private final frmAdministradorProveedores fap;
@@ -95,69 +91,6 @@ public class mProveedores extends mGenerales {
         colorear2(telefono);
         colorear2(email);
         id.requestFocus();
-    }
-    
-    public final void Opciones() {
-        JMenuItem upd = new JMenuItem("Modificar");
-        JMenuItem dlt = new JMenuItem("Eliminar");
-
-//        fagu.pmOpciones.add(upd);
-//        fagu.pmOpciones.add(dlt);
-//        fagu.jtbUsuarios.setComponentPopupMenu(fagu.pmOpciones);
-//        upd.addActionListener((ActionEvent e) -> {
-//            if (fagu.jtbUsuarios.getSelectedRow() != -1) {
-//
-//                if (!fagu.jtbUsuarios.getValueAt(fagu.jtbUsuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-//                    if (Conectado()) {
-//                        registroUsuarios.setVisible(true);
-//                        Modificar();
-//                        fagu.dispose();
-//                    } else {
-//                        new frmLogueo().setVisible(true);
-//                        fagu.dispose();
-//                    }
-//                } else {
-//                    if (Conectado()) {
-//                        registroUsuarios.setVisible(true);
-//                        Modificar();
-//                        registroUsuarios.txtUsuario.setEditable(false);
-//                        registroUsuarios.rbAdmin.setEnabled(false);
-//                        registroUsuarios.rbUser.setEnabled(false);
-//                        fagu.dispose();
-//                    } else {
-//                        new frmLogueo().setVisible(true);
-//                        fagu.dispose();
-//                    }
-//                }
-//            } else {
-//                oA.error("Seleccione una fila primero.", "");
-//            }
-//        });
-//        dlt.addActionListener((ActionEvent e) -> {
-//            if (fagu.jtbUsuarios.getSelectedRow() != -1) {
-//                if (!fagu.jtbUsuarios.getValueAt(fagu.jtbUsuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-//                    if (Conectado()) {
-//
-//                        if (oA.confCerrar("¿Está seguro de eliminar?") == 0) {
-//                            try {
-//                                EliminarUsuario();
-//                                oA.aviso("Usuario eliminado.");
-//                                Mostrar();
-//                            } catch (ClassNotFoundException | SQLException ex) {
-//                                oA.error("Error al eliminar", ex.toString());
-//                            }
-//                        }
-//                    } else {
-//                        new frmLogueo().setVisible(true);
-//                        fagu.dispose();
-//                    }
-//                } else {
-//                    oA.error("Cierre sesión primero.", "");
-//                }
-//            } else {
-//                oA.error("Seleccione una fila primero.", "");
-//            }
-//        });
     }
     
     void MouseListeners() {
@@ -301,7 +234,7 @@ public class mProveedores extends mGenerales {
         });
     }
     
-    void Seleccionar() throws ClassNotFoundException, SQLException {
+    void Seleccionar() throws ClassNotFoundException{
         int fila = proveedores.getSelectedRow();
         if (Conf() == true && Conectado()) {
             EncontrarDepartamento();
@@ -409,16 +342,6 @@ public class mProveedores extends mGenerales {
             return false;
         } else {
             colorear2(telefono);
-        }
-        return true;
-    }
-    
-    boolean Conectado() {
-        try {
-            Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.toString());
-            return false;
         }
         return true;
     }
@@ -545,46 +468,9 @@ public class mProveedores extends mGenerales {
         return true;
     }
     
-    void MostrarProveedores() {
-        try {
-            rsProveedores = ListaProveedores();
-            Object[] prov = new Object[8];
-            modelo = (DefaultTableModel) proveedores.getModel();
-            
-            modelo.setRowCount(0);
-            
-            while (rsProveedores.next()) {
-                prov[0] = rsProveedores.getInt("IdProveedor");
-                prov[1] = rsProveedores.getString("Razon_Social");
-                prov[2] = rsProveedores.getString("RUC");
-                prov[3] = rsProveedores.getString("Direccion");
-                prov[4] = rsProveedores.getString("Contacto");
-                prov[5] = rsProveedores.getString("Telefono");
-                prov[6] = rsProveedores.getString("Email");
-                prov[7] = rsProveedores.getString("Departamento");
-                modelo.addRow(prov);
-            }
-            proveedores.setModel(modelo);
-        } catch (SQLException ex) {
-            oA.errorC(ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            oA.error("Error desconocido", ex.getMessage());
-        }
-    }
     
-    void MostrarDepartamentos() {
-        try {
-            rsDepartamentos = ListarDepartamentos();
-            while (rsDepartamentos.next()) {
-                departamentos.addItem(rsDepartamentos.getString("Departamento"));
-            }
-            departamentos.setSelectedItem(null);
-        } catch (ClassNotFoundException ex) {
-            oA.error("Error desconocido.", ex.getMessage());
-        } catch (SQLException ex) {
-            oA.errorC(ex.getMessage());
-        }
-    }
+    
+    
     
     @Override
     public void CargarFrame() {
@@ -621,120 +507,5 @@ public class mProveedores extends mGenerales {
         });
     }
     
-    void EncontrarDepartamento() throws SQLException, ClassNotFoundException {
-        String fila = proveedores.getValueAt(proveedores.getSelectedRow(), 7).toString();
-        String[] depart = new String[25];
-        rsDepartamentos = ListarDepartamentos();
-        for (int i = 0; rsDepartamentos.next(); i++) {
-            depart[i] = rsDepartamentos.getString("Departamento");
-            if (depart[i].equals(fila)) {
-                departamentos.setSelectedIndex(i);
-            }
-        }
-    }
     
-    //SQL
-        public ResultSet ListaProveedores() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from proveedores ");
-
-        return rs;
-    }
-
-    public void Modificar() throws SQLException, ClassNotFoundException {
-
-        con = Conectar();
-        psInsertar = con.prepareStatement("UPDATE proveedores SET Razon_Social=?,RUC=?,Direccion=?,Contacto=?,Telefono=?,Email=?,Departamento=? WHERE IdProveedor=?");
-        psInsertar.setString(1, oProveedores.getRazonSocial());
-        psInsertar.setString(2, oProveedores.getRuc());
-        psInsertar.setString(3, oProveedores.getDireccion());
-        psInsertar.setString(4, oProveedores.getContacto());
-        psInsertar.setString(5, oProveedores.getTelefono());
-        psInsertar.setString(6, oProveedores.getEmail());
-        psInsertar.setString(7, oProveedores.getDepartamento());
-        psInsertar.setInt(8, oProveedores.getIdProveedor());
-        psInsertar.executeUpdate();
-
-    }
-
-    public void Insertar() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement("INSERT INTO proveedores(IdProveedor,Razon_Social,RUC,Direccion,Contacto,Telefono,Email,Departamento) VALUES (?,?,?,?,?,?,?,?)");
-        psInsertar.setInt(1, oProveedores.getIdProveedor());
-        psInsertar.setString(2, oProveedores.getRazonSocial());
-        psInsertar.setString(3, oProveedores.getRuc());
-        psInsertar.setString(4, oProveedores.getDireccion());
-        psInsertar.setString(5, oProveedores.getContacto());
-        psInsertar.setString(6, oProveedores.getTelefono());
-        psInsertar.setString(7, oProveedores.getEmail());
-        psInsertar.setString(8, oProveedores.getDepartamento());
-        psInsertar.executeUpdate();
-    }
-
-    public ResultSet ObtNumDep() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select Num_Proveedores from departamentos where Departamento = '" + oProveedores.getDepartamento() + "'");
-
-        return rs;
-    }
-
-    public void ActDep() throws ClassNotFoundException, SQLException {
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement("UPDATE departamentos SET Num_Proveedores=? WHERE Departamento=?");
-        psInsertar.setInt(1, oProveedores.getNumProveedores());
-        psInsertar.setString(2, oProveedores.getDepartamento());
-        psInsertar.executeUpdate();
-    }
-
-    public void Eliminar() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.executeUpdate("DELETE FROM proveedores WHERE IdProveedor=" + oProveedores.getIdProveedor());
-    }
-
-    public ResultSet ListarDepartamentos() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from departamentos");
-        return rs;
-    }
-
-    public ResultSet ListarProductos() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from productos");
-        return rs;
-    }
-
-    public ResultSet Reporte() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from proveedores ");
-        return rs;
-    }
-
-    public ResultSet ObtRespuesta() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());  
-        st = con.createStatement();
-        rs = st.executeQuery("Select Proveedor from productos");
-
-        return rs;
-    }
-
-    public void EliminarDePrecio() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());  
-        st = con.createStatement();
-        st.executeUpdate("DELETE FROM precios WHERE Proveedor='" + razonSocial + "'");
-    }
 }

@@ -1,9 +1,9 @@
 package Metodos;
 
+import Clases.cAdministrador;
 import Clases.cAlertas;
 import Formularios.*;
 import java.awt.event.*;
-import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 public class mAdministrador extends mGenerales {
 
     private final cAlertas oA = new cAlertas();
+    private final cAdministrador oAd = new cAdministrador();
     private final frmAdministrador a;
     private final JLabel lblUsuario;
     private final JButton btnCerrarSesion, btnGestionarUsuarios, btnNuevoUsuario, btnProductos, btnProveedores;
@@ -29,15 +30,15 @@ public class mAdministrador extends mGenerales {
         btnProveedores = a.getBtnProveedores();
     }
 
-    public boolean ComprobarConexion() {
-        try {
-            Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException e) {
-            oA.errorC(e.toString());
-            return false;
-        }
-        return true;
-    }
+//    public boolean ComprobarConexion() {
+//        try {
+//                Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
+//        } catch (ClassNotFoundException | SQLException e) {
+//            oA.errorC(e.toString());
+//            return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public final void Close() {
@@ -64,7 +65,7 @@ public class mAdministrador extends mGenerales {
         btnGestionarUsuarios.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (ComprobarConexion()) {
+                if (oAd.ComprobarConexion()) {
                     a.dispose();
                     new mGestionarUsuarios().CargarFrame();                  
                 } else {
@@ -77,7 +78,7 @@ public class mAdministrador extends mGenerales {
         btnProveedores.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (ComprobarConexion()) {
+                if (oAd.ComprobarConexion()) {
                     a.dispose();
                     new mProveedores().CargarFrame();
                 } else {
@@ -89,7 +90,7 @@ public class mAdministrador extends mGenerales {
         btnProductos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (ComprobarConexion()) {
+                if (oAd.ComprobarConexion()) {
                     a.dispose();
 //                    new frmAdministradorProductos().setVisible(true);
                 } else {
@@ -101,7 +102,7 @@ public class mAdministrador extends mGenerales {
         btnNuevoUsuario.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (ComprobarConexion()) {                    
+                if (oAd.ComprobarConexion()) {                    
                     a.dispose();
                     new mRegistroUsuarios().CargarFrame();
                 } else {                
