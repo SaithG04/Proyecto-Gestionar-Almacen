@@ -14,20 +14,18 @@ import javax.swing.table.DefaultTableModel;
  * @author isai_
  */
 public class mProveedores extends mGenerales {
-    
+
     private final cAlertas oA = new cAlertas();
-    
-    private DefaultTableModel modelo;
     cAdministradorProveedores oProveedores = new cAdministradorProveedores();
-   
+
     Object[] c = new Object[1];
-    
+
     private final frmAdministradorProveedores fap;
     private final JButton agregar, eliminar, limpiar, modificar;
     private final JTextField id, razonSocial, ruc, direccion, contacto, telefono, email;
     private final JTable proveedores;
     private final JComboBox<String> departamentos;
-    
+
     public mProveedores() {
         fap = new frmAdministradorProveedores();
         agregar = fap.getBtnAgregar();
@@ -54,17 +52,17 @@ public class mProveedores extends mGenerales {
         }
         return true;
     }
-    
+
     void colorear1(JTextField txt) {
         txt.setBackground(new Color(255, 153, 153));
         txt.setForeground(Color.BLACK);
     }
-    
+
     void colorear2(JTextField txt) {
         txt.setBackground(new Color(0, 51, 102));
         txt.setForeground(Color.WHITE);
     }
-    
+
     void colorear3(JButton btn, String type) {
         if (type.equals("in")) {
             btn.setBackground(new Color(255, 204, 102));
@@ -72,7 +70,7 @@ public class mProveedores extends mGenerales {
             btn.setBackground(new Color(0, 102, 255));
         }
     }
-    
+
     void Limpiar() {
         id.setText(null);
         razonSocial.setText(null);
@@ -82,7 +80,7 @@ public class mProveedores extends mGenerales {
         telefono.setText(null);
         email.setText(null);
         departamentos.setSelectedItem(null);
-        
+
         colorear2(id);
         colorear2(razonSocial);
         colorear2(ruc);
@@ -92,7 +90,7 @@ public class mProveedores extends mGenerales {
         colorear2(email);
         id.requestFocus();
     }
-    
+
     void MouseListeners() {
         agregar.addMouseListener(new MouseAdapter() {
             @Override
@@ -170,17 +168,11 @@ public class mProveedores extends mGenerales {
         proveedores.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                try {
-                    Seleccionar();
-                } catch (ClassNotFoundException ex) {
-                    oA.error("Error desconocido", ex.getMessage());
-                } catch (SQLException ex) {
-                    oA.errorC(ex.getMessage());
-                }
+                Seleccionar();
             }
         });
     }
-    
+
     void KeyListeners() {
         id.addKeyListener(new KeyAdapter() {
             @Override
@@ -222,22 +214,16 @@ public class mProveedores extends mGenerales {
             @Override
             public void keyReleased(KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_UP) {
-                    try {
-                        Seleccionar();
-                    } catch (ClassNotFoundException ex) {
-                        oA.error("Error desconocido.", ex.getMessage());
-                    } catch (SQLException ex) {
-                        oA.errorC(ex.getMessage());
-                    }
+                    Seleccionar();
                 }
             }
         });
     }
-    
-    void Seleccionar() throws ClassNotFoundException{
+
+    void Seleccionar() {
         int fila = proveedores.getSelectedRow();
-        if (Conf() == true && Conectado()) {
-            EncontrarDepartamento();
+        if (Conf() == true && oProveedores.Conectado()) {
+            int EncontrarDepartamento = oProveedores.EncontrarDepartamento(proveedores.getValueAt(fila, 7).toString());
             id.setText(proveedores.getValueAt(fila, 0).toString());
             razonSocial.setText(proveedores.getValueAt(fila, 1).toString());
             ruc.setText(proveedores.getValueAt(fila, 2).toString());
@@ -245,20 +231,20 @@ public class mProveedores extends mGenerales {
             contacto.setText(proveedores.getValueAt(fila, 4).toString());
             telefono.setText(proveedores.getValueAt(fila, 5).toString());
             email.setText(proveedores.getValueAt(fila, 6).toString());
+            departamentos.setSelectedIndex(EncontrarDepartamento);
         }
     }
-    
+
     boolean Validar() {
-        
+
         String RS = razonSocial.getText();
         String R = ruc.getText();
         String D = direccion.getText();
         String C = contacto.getText();
         String T = telefono.getText();
         String E = email.getText();
-        String I = id.getText();
-        
-        if (RS.isEmpty() || R.isEmpty() || D.isEmpty() || C.isEmpty() || T.isEmpty() || E.isEmpty() || I.isEmpty()) {
+
+        if (RS.isEmpty() || R.isEmpty() || D.isEmpty() || C.isEmpty() || T.isEmpty() || E.isEmpty()) {
             Toolkit.getDefaultToolkit().beep();
             colorear1(razonSocial);
             colorear1(ruc);
@@ -266,8 +252,7 @@ public class mProveedores extends mGenerales {
             colorear1(contacto);
             colorear1(telefono);
             colorear1(email);
-            colorear1(id);
-            
+
             if (!E.isEmpty()) {
                 colorear2(email);
             } else {
@@ -304,14 +289,7 @@ public class mProveedores extends mGenerales {
                 razonSocial.requestFocus();
                 return false;
             }
-            if (!I.isEmpty()) {
-                colorear2(id);
-            } else {
-                id.requestFocus();
-                return false;
-            }
         } else if (departamentos.getSelectedIndex() == -1) {
-            colorear2(id);
             colorear2(razonSocial);
             colorear2(ruc);
             colorear2(direccion);
@@ -321,7 +299,6 @@ public class mProveedores extends mGenerales {
             oA.error("Seleccione un departamento.", "");
             return false;
         } else if (R.length() < 11) {
-            colorear2(id);
             colorear2(razonSocial);
             colorear1(ruc);
             colorear2(direccion);
@@ -331,7 +308,6 @@ public class mProveedores extends mGenerales {
             oA.error("R.U.C. inválido.", "");
             return false;
         } else if (T.length() < 9) {
-            colorear2(id);
             colorear2(razonSocial);
             colorear2(ruc);
             colorear2(direccion);
@@ -345,112 +321,55 @@ public class mProveedores extends mGenerales {
         }
         return true;
     }
-    
+
     void AgregarProveedor() {
         if (Validar()) {
-            try {
-                oProveedores.setIdProveedor(0);
+            oProveedores.setIdProveedor(0); //Es autoincrementable
+            oProveedores.setRazonSocial(razonSocial.getText());
+            oProveedores.setRuc(ruc.getText());
+            oProveedores.setDireccion(direccion.getText());
+            oProveedores.setContacto(contacto.getText());
+            oProveedores.setTelefono(telefono.getText());
+            oProveedores.setEmail(email.getText());
+            oProveedores.setDepartamento(departamentos.getSelectedItem().toString());
+            DefaultTableModel AgregarProveedor = oProveedores.AgregarProveedor(proveedores.getModel());
+            proveedores.setModel(AgregarProveedor);
+            Limpiar();
+        }
+    }
+
+    void ModificarProveedor() {
+        if (Conf() == true) {
+            int fila = proveedores.getSelectedRow();
+            String dep = proveedores.getValueAt(fila, 7).toString();
+            if (Validar() == true) {
+                oProveedores.setIdProveedor(Integer.parseInt(id.getText()));
                 oProveedores.setRazonSocial(razonSocial.getText());
                 oProveedores.setRuc(ruc.getText());
                 oProveedores.setDireccion(direccion.getText());
                 oProveedores.setContacto(contacto.getText());
                 oProveedores.setTelefono(telefono.getText());
                 oProveedores.setEmail(email.getText());
-                oProveedores.setDepartamento(departamentos.getSelectedItem().toString());
-                Insertar();
-                
-                rsNumDep = ObtNumDep();
-                while (rsNumDep.next()) {
-                    c[0] = rsNumDep.getInt("Num_Proveedores");
-                    oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) + 1);
-                    ActDep();
-                }
-                oA.aviso("El proveedor se ha agregado correctamente.");
-                MostrarProveedores();
+                oProveedores.setDepartamento(dep);
+                DefaultTableModel ModificarProveedor = oProveedores.ModificarProveedor(dep, departamentos.getSelectedItem().toString(), proveedores.getModel());
                 Limpiar();
-            } catch (ClassNotFoundException ex) {
-                    oA.error("Error al agregar.", ex.getMessage());
-                } catch(SQLException ex){
-                    oA.errorC(ex.getMessage());
-                }
-            
-        }
-    }
-    
-    void ModificarProveedor() {
-        if (Conf() == true) {
-            int fila = proveedores.getSelectedRow();
-            String dep = proveedores.getValueAt(fila, 7).toString();
-            if (Validar() == true) {
-                try {
-                    oProveedores.setIdProveedor(Integer.parseInt(id.getText()));
-                    oProveedores.setRazonSocial(razonSocial.getText());
-                    oProveedores.setRuc(ruc.getText());
-                    oProveedores.setDireccion(direccion.getText());
-                    oProveedores.setContacto(contacto.getText());
-                    oProveedores.setTelefono(telefono.getText());
-                    oProveedores.setEmail(email.getText());
-                    oProveedores.setDepartamento(dep);
-                    if (!(dep.equalsIgnoreCase(departamentos.getSelectedItem().toString()))) {
-                        
-                        rsNumDep = ObtNumDep();
-                        while (rsNumDep.next()) {
-                            c[0] = rsNumDep.getInt("Num_Proveedores");
-                            oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) - 1);
-                            ActDep();
-                        }
-                        oProveedores.setDepartamento(departamentos.getSelectedItem().toString());
-                        rsNumDep = ObtNumDep();
-                        while (rsNumDep.next()) {
-                            c[0] = rsNumDep.getInt("Num_Proveedores");
-                            oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) + 1);
-                            ActDep();
-                        }
-                    } else {
-                        oProveedores.setDepartamento(dep);
-                    }
-                    Modificar();
-                    MostrarProveedores();
-                    Limpiar();
-                    oA.aviso("Modificado con éxito");
-                } catch (ClassNotFoundException ex) {
-                    oA.error("Error al modificar.", ex.getMessage());
-                } catch(SQLException ex){
-                    oA.errorC(ex.getMessage());
-                }
+                proveedores.setModel(ModificarProveedor);
             }
         }
     }
-    
+
     void EliminarProveedor() {
         if (Conf() == true) {
             if (oA.confirmación("¿Está seguro de eliminar?") == 0) {
-                try {
-                    int fila = proveedores.getSelectedRow();
-                    oProveedores.setIdProveedor(Integer.parseInt(proveedores.getValueAt(fila, 0).toString()));
-                    oProveedores.setDepartamento(proveedores.getValueAt(fila, 7).toString());
-                    rsNumDep = ObtNumDep();
-                    
-                    while (rsNumDep.next()) {
-                        c[0] = rsNumDep.getInt("Num_Proveedores");
-                        oProveedores.setNumProveedores(Integer.parseInt(c[0].toString()) - 1);
-                        ActDep();
-                    }
-                    Eliminar();
-                    oProveedores.setRazonSocial(proveedores.getValueAt(fila, 1).toString());
-                    EliminarDePrecio();
-                    MostrarProveedores();
-                    Limpiar();
-                    JOptionPane.showMessageDialog(null, "El proveedor ha sido eliminado correctamente.");
-                } catch (ClassNotFoundException ex) {
-                    oA.error("Error desconocido.", ex.getMessage());
-                } catch (SQLException ex) {
-                    oA.errorC(ex.getMessage());
-                }
+                int fila = proveedores.getSelectedRow();
+                oProveedores.setIdProveedor(Integer.parseInt(proveedores.getValueAt(fila, 0).toString()));
+                oProveedores.setDepartamento(proveedores.getValueAt(fila, 7).toString());
+                oProveedores.EliminarProveedor(proveedores.getValueAt(fila, 1).toString(), proveedores.getModel());
+                Limpiar();
             }
         }
     }
-    
+
     boolean CompararClave() {
         //En caso no quiera usar id incrementable
         int fila = proveedores.getRowCount();
@@ -467,36 +386,36 @@ public class mProveedores extends mGenerales {
         }
         return true;
     }
-    
-    
-    
-    
-    
+
     @Override
     public void CargarFrame() {
         fap.setVisible(true);
-        MostrarProveedores();
-        MostrarDepartamentos();
+        proveedores.setModel(oProveedores.MostrarProveedores(proveedores.getModel()));
+        String[] MostrarDepartamentos = oProveedores.MostrarDepartamentos();
+        for (String item : MostrarDepartamentos) {
+            departamentos.addItem(item);
+        }
+        departamentos.setSelectedIndex(-1);
         Close();
         MouseListeners();
         KeyListeners();
         fap.setTitle(" Lista de Clientes ");
         fap.setLocationRelativeTo(null);
     }
-    
+
     @Override
     public final void Close() {
         fap.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                
+
                 String RS = razonSocial.getText();
                 String R = ruc.getText();
                 String D = direccion.getText();
                 String C = contacto.getText();
                 String T = telefono.getText();
                 String E = email.getText();
-                
+
                 if (!RS.isEmpty() || !R.isEmpty() || !D.isEmpty() || !C.isEmpty() || !T.isEmpty() || !E.isEmpty()) {
                     oA.confCerrar(fap, "administrador");
                 } else {
@@ -506,6 +425,4 @@ public class mProveedores extends mGenerales {
             }
         });
     }
-    
-    
 }

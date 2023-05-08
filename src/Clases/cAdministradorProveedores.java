@@ -2,15 +2,11 @@ package Clases;
 
 import Metodos.mLogueo;
 import Metodos.mSQL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import java.sql.*;
+import javax.swing.JTable;
+import javax.swing.table.*;
 
-public class cAdministradorProveedores extends mSQL{
+public class cAdministradorProveedores extends mSQL {
 
     //Atributos
     private int idProveedor;
@@ -23,16 +19,13 @@ public class cAdministradorProveedores extends mSQL{
     private String departamento;
     private int numProveedores;
     private String proveedores;
-    
+
     private final cAlertas oA = new cAlertas();
     private Connection con;
     private Statement st;
-    private ResultSet rs, rsUsuarios;
     ResultSet rsProveedores, rsDepartamentos, rsNumDep;
-//    private DefaultTableModel modelo;
-//    Connection con;//Conectar a la base de datos
-//    Statement st;
-//    ResultSet rs;
+    private DefaultTableModel modelo;
+    ResultSet rs;
     PreparedStatement psInsertar = null;
 
     //Getter and Setter
@@ -115,58 +108,7 @@ public class cAdministradorProveedores extends mSQL{
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
     }
-    public ResultSet ListaUsuarios() throws SQLException, ClassNotFoundException {
 
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        rs = st.executeQuery("Select * from usuarios");
-
-        return rs;
-    }
-
-    public void EliminarUsuario(String user) {
-        try {
-            //        String user = usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString();
-            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-            st = con.createStatement();
-            st.execute("DROP USER '" + user + "'@'%'");
-            st.executeUpdate("DELETE FROM usuarios WHERE username='" + user + "'");
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.getMessage());
-        }
-    }
-    
-    public DefaultTableModel MostrarUsuarios(TableModel usuarios) {
-
-        try {
-            rsUsuarios = ListaUsuarios();
-            Object[] usuariosArray = new Object[8];
-            modelo = (DefaultTableModel) usuarios;
-
-            modelo.setRowCount(0);
-            while (rsUsuarios.next()) {
-                usuariosArray[0] = rsUsuarios.getInt("id_usuario");
-                usuariosArray[1] = rsUsuarios.getString("nombres");
-                usuariosArray[2] = rsUsuarios.getString("apellidos");
-                usuariosArray[3] = rsUsuarios.getString("username");
-                usuariosArray[5] = rsUsuarios.getString("tipo_usuario");
-                usuariosArray[6] = rsUsuarios.getLong("telefono");
-                usuariosArray[7] = rsUsuarios.getString("correo");
-                int length = rsUsuarios.getString("contraseña").length();
-                usuariosArray[4] = "";
-                for (int i = 0; i < length; i++) {
-                    usuariosArray[4] = usuariosArray[4] + "*";
-                }
-                modelo.addRow(usuariosArray); //Va adheriendo en nuestro DefaultTableModel "modelo"
-            }
-            return modelo;
-//            usuarios.setModel(modelo); //aqui va enviar los datos de "modelo" a nuestra jtbUsuarios
-        } catch (SQLException | ClassNotFoundException ex) {
-            oA.errorC(ex.toString());
-        }
-        return null;
-    }
-    
     public boolean Conectado() {
 
         try {
@@ -177,15 +119,87 @@ public class cAdministradorProveedores extends mSQL{
         }
         return true;
     }
-    
-    void MostrarProveedores() {
+
+    public DefaultTableModel AgregarProveedor(TableModel modelo) {
+        try {
+            Insertar();
+            Object[] c = new Object[1];
+            rsNumDep = ObtNumDep();
+            while (rsNumDep.next()) {
+                c[0] = rsNumDep.getInt("Num_Proveedores");
+                numProveedores = Integer.parseInt(c[0].toString()) + 1;
+                ActDep();
+            }
+            oA.aviso("El proveedor se ha agregado correctamente.");
+            DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
+            return MostrarProveedores;
+        } catch (SQLException | ClassNotFoundException ex) {
+            oA.errorC(ex.getMessage());
+        }
+        return null;
+    }
+
+    public DefaultTableModel ModificarProveedor(String departT, String departS, TableModel model) {
+        try {
+            if (!(departT.equalsIgnoreCase(departS))) {
+
+                rsNumDep = ObtNumDep();
+                Object[] c = new Object[1];
+                while (rsNumDep.next()) {
+                    c[0] = rsNumDep.getInt("Num_Proveedores");
+                    numProveedores = Integer.parseInt(c[0].toString()) - 1;
+                    ActDep();
+                }
+                departamento = departS;
+                rsNumDep = ObtNumDep();
+                while (rsNumDep.next()) {
+                    c[0] = rsNumDep.getInt("Num_Proveedores");
+                    numProveedores = Integer.parseInt(c[0].toString()) + 1;
+                    ActDep();
+                }
+            } else {
+                departamento = departT;
+            }
+            Modificar();
+            DefaultTableModel MostrarProveedores = MostrarProveedores(model);
+            oA.aviso("Modificado con éxito");
+            return MostrarProveedores;
+        } catch (ClassNotFoundException | SQLException ex) {
+            oA.errorC(ex.getMessage());
+        }
+        return null;
+    }
+
+    public DefaultTableModel EliminarProveedor(String razonSocial, TableModel modelo) {
+        try {
+            rsNumDep = ObtNumDep();
+            Object[] c = new Object[1];
+            while (rsNumDep.next()) {
+
+                c[0] = rsNumDep.getInt("Num_Proveedores");
+                numProveedores = Integer.parseInt(c[0].toString()) - 1;
+                ActDep();
+            }
+            Eliminar();
+            this.razonSocial = razonSocial;
+            EliminarDePrecio();
+            DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
+            oA.aviso("El proveedor ha sido eliminado correctamente.");
+            return MostrarProveedores;
+        } catch (SQLException | ClassNotFoundException ex) {
+            oA.errorC(ex.getMessage());
+        }
+        return null;
+    }
+
+    public DefaultTableModel MostrarProveedores(TableModel proveedores) {
         try {
             rsProveedores = ListaProveedores();
             Object[] prov = new Object[8];
-            modelo = (DefaultTableModel) proveedores.getModel();
-            
+            modelo = (DefaultTableModel) proveedores;
+
             modelo.setRowCount(0);
-            
+
             while (rsProveedores.next()) {
                 prov[0] = rsProveedores.getInt("IdProveedor");
                 prov[1] = rsProveedores.getString("Razon_Social");
@@ -197,41 +211,45 @@ public class cAdministradorProveedores extends mSQL{
                 prov[7] = rsProveedores.getString("Departamento");
                 modelo.addRow(prov);
             }
-            proveedores.setModel(modelo);
-        } catch (SQLException ex) {
+            return modelo;
+        } catch (SQLException | ClassNotFoundException ex) {
             oA.errorC(ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            oA.error("Error desconocido", ex.getMessage());
         }
+        return null;
     }
-    
-    void MostrarDepartamentos() {
+
+    public String[] MostrarDepartamentos() {
         try {
+            String[] depart = new String[25];
             rsDepartamentos = ListarDepartamentos();
-            while (rsDepartamentos.next()) {
-                departamentos.addItem(rsDepartamentos.getString("Departamento"));
+            for (int i = 0; rsDepartamentos.next(); i++) {
+                depart[i] = rsDepartamentos.getString("Departamento");
             }
-            departamentos.setSelectedItem(null);
-        } catch (ClassNotFoundException ex) {
-            oA.error("Error desconocido.", ex.getMessage());
-        } catch (SQLException ex) {
+            return depart;
+        } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
+        return null;
     }
-    void EncontrarDepartamento(int fila) throws SQLException, ClassNotFoundException {
-//        String fila = proveedores.getValueAt(proveedores.getSelectedRow(), 7).toString();
-        String[] depart = new String[25];
-        rsDepartamentos = ListarDepartamentos();
-        for (int i = 0; rsDepartamentos.next(); i++) {
-            depart[i] = rsDepartamentos.getString("Departamento");
-            if (depart[i].equals(fila)) {
-                departamentos.setSelectedIndex(i);
+
+    public int EncontrarDepartamento(String dep) {
+        try {
+            //        String fila = proveedores.getValueAt(proveedores.getSelectedRow(), 7).toString();
+            String[] depart = new String[25];
+            rsDepartamentos = ListarDepartamentos();
+            for (int i = 0; rsDepartamentos.next(); i++) {
+                depart[i] = rsDepartamentos.getString("Departamento");
+                if (depart[i].equals(dep)) {
+                    return i;
+                }
             }
+        } catch (SQLException | ClassNotFoundException ex) {
+            oA.errorC(ex.getMessage());
         }
+        return -1;
     }
-    
-    //SQL
-        public ResultSet ListaProveedores() throws SQLException, ClassNotFoundException {
+
+    public ResultSet ListaProveedores() throws SQLException, ClassNotFoundException {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
@@ -321,7 +339,7 @@ public class cAdministradorProveedores extends mSQL{
 
     public ResultSet ObtRespuesta() throws ClassNotFoundException, SQLException {
 
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());  
+        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
         rs = st.executeQuery("Select Proveedor from productos");
 
@@ -330,7 +348,7 @@ public class cAdministradorProveedores extends mSQL{
 
     public void EliminarDePrecio() throws SQLException, ClassNotFoundException {
 
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());  
+        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
         st.executeUpdate("DELETE FROM precios WHERE Proveedor='" + razonSocial + "'");
     }

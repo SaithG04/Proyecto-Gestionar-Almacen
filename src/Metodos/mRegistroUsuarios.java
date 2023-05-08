@@ -3,7 +3,6 @@ package Metodos;
 import Clases.*;
 import Formularios.*;
 import java.awt.event.*;
-import java.sql.*;
 import javax.swing.*;
 
 /**
@@ -14,9 +13,7 @@ public class mRegistroUsuarios extends mGenerales {
 
     private final cAlertas oA = new cAlertas();
     private cUsuarios oU;
-    private Connection con;
-    private Statement st;
-    private PreparedStatement psInsertar;
+    private final cRegistroUsuarios oRU = new cRegistroUsuarios();
 
     public final JTextField id, nombres, apellidos, telefono, correo, usuario;
     public final JPasswordField contraseña;
@@ -44,62 +41,52 @@ public class mRegistroUsuarios extends mGenerales {
         if (Validar()) {
             if (aceptar.getText().equalsIgnoreCase("registrar")) {
                 if (admin.isSelected()) {
-                    try {
-                        oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
-                                String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        RegistrarUser();
-                        Registrar(oU, mGenerales.CREARUSER);
-                        Limpiar();
-                        oA.aviso("Correcto");
-                    } catch (ClassNotFoundException | SQLException ex) {
-                        oA.error("Incorrecto", ex.toString());
-                    }
+                    oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
+                            String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
+                    oRU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                    oRU.Registrar(oU, CREARUSER);
+                    Limpiar();
+//                    oA.aviso("Correcto");
                 } else {
-                    try {
-                        oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
-                                String.valueOf(contraseña.getPassword()), "usuario", telefono.getText(), correo.getText());
-                        RegistrarUser();
-                        Registrar(oU, mGenerales.CREARUSER);
-                        Limpiar();
-                        oA.aviso("Correcto");
-                    } catch (ClassNotFoundException | SQLException ex) {
-                        oA.error("Incorrecto", ex.toString());
-                    }
+                    oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
+                            String.valueOf(contraseña.getPassword()), "usuario", telefono.getText(), correo.getText());
+                    oRU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                    oRU.Registrar(oU, CREARUSER);
+                    Limpiar();
+//                    oA.aviso("Correcto");
                 }
             } else {
                 if (admin.isSelected()) {
                     if (usuario.getText().equals(mLogueo.oL.getUsuario())) {
-                        try {
-                            oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
-                                    String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                            JOptionPane.showMessageDialog(null, "Inicie sesión nuevamente");
-                            Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER);
-                            ModificarAdmin();
-                            fru.dispose();
-                            new mLogueo().CargarFrame();
-                        } catch (ClassNotFoundException | SQLException ex) {
-                            oA.error("Incorrecto", ex.toString());
-                        }
+                        oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
+                                String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
+                        JOptionPane.showMessageDialog(null, "Inicie sesión nuevamente");
+                        oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
+                                usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
+                        oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                        fru.dispose();
+                        new mLogueo().CargarFrame();
                     } else {
                         oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                 String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        oA.aviso("Correcto");
+                        
+                        oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                        oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
+                                usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
+//                        oA.aviso("Correcto");
                         fru.dispose();
                         new mGestionarUsuarios().CargarFrame();
                     }
                 } else if (user.isSelected()) {
-                    try {
-                        oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(),
-                                usuario.getText(), String.valueOf(contraseña.getPassword()),
-                                "usuario", telefono.getText(), correo.getText());
-                        ModificarUser();
-                        Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER);
-                        oA.aviso("Correcto");
-                        fru.dispose();
-                        new mGestionarUsuarios().CargarFrame();
-                    } catch (ClassNotFoundException | SQLException ex) {
-                        oA.error("Incorrecto", ex.toString());
-                    }
+                    oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(),
+                            usuario.getText(), String.valueOf(contraseña.getPassword()),
+                            "usuario", telefono.getText(), correo.getText());
+                    oRU.ModificarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                    oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
+                            usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
+//                    oA.aviso("Correcto");
+                    fru.dispose();
+                    new mGestionarUsuarios().CargarFrame();
                 }
             }
         }
@@ -217,76 +204,6 @@ public class mRegistroUsuarios extends mGenerales {
         usuario.setBackground(null);
         contraseña.setBackground(null);
 
-    }
-
-    public void RegistrarUser() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.execute("CREATE USER '" + usuario.getText() + "'@'%' IDENTIFIED BY '" + String.valueOf(contraseña.getPassword()) + "'");
-        st.execute("GRANT SELECT ON * . * TO '" + usuario.getText() + "'@'%'");
-        /* 
-        % - Conexion Remota.
-        localhost - Conexion Local.
-         */
-    }
-
-    public void RegistrarAdmin() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.execute("CREATE USER '" + usuario.getText() + "'@'%' IDENTIFIED BY '" + String.valueOf(contraseña.getPassword()) + "'");
-        st.execute("GRANT ALL PRIVILEGES ON * . * TO '" + usuario.getText() + "'@'%'");
-        st.execute("GRANT GRANT OPTION ON * . * TO '" + usuario.getText() + "'@'%'");
-    }
-
-    public void ModificarUser() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.execute("REVOKE ALL PRIVILEGES ON * . * FROM '" + usuario.getText() + "'@'%'");
-        st.execute("GRANT SELECT ON * . * TO '" + usuario.getText() + "'@'%'");
-        st.execute("SET PASSWORD FOR '" + usuario.getText() + "'@'%' = PASSWORD('" + String.valueOf(contraseña.getPassword()) + "')");
-    }
-
-    public void ModificarAdmin() throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.execute("GRANT ALL PRIVILEGES ON * . * TO '" + usuario.getText() + "'@'%'");
-        st.execute("GRANT GRANT OPTION ON * . * TO '" + usuario.getText() + "'@'%'");
-        st.execute("SET PASSWORD FOR '" + usuario.getText() + "'@'%' = PASSWORD('" + String.valueOf(contraseña.getPassword()) + "')");
-
-    }
-
-    public void Registrar(cUsuarios usuario, String consulta) throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement(consulta);
-        psInsertar.setInt(1, usuario.getIdUsuario());
-        psInsertar.setString(2, usuario.getNombres());
-        psInsertar.setString(3, usuario.getApellidos());
-        psInsertar.setString(4, usuario.getUsuario());
-        psInsertar.setString(5, usuario.getContraseña());
-        psInsertar.setString(6, usuario.getTipoUsuario());
-        psInsertar.setString(7, usuario.getTelefono());
-        psInsertar.setString(8, usuario.getCorreo());
-        psInsertar.executeUpdate();
-    }
-
-    public void Actualizar(String tipoUsuario, String consulta) throws ClassNotFoundException, SQLException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement(consulta);
-        psInsertar.setString(1, nombres.getText());
-        psInsertar.setString(2, apellidos.getText());
-        psInsertar.setString(3, usuario.getText());
-        psInsertar.setString(4, String.valueOf(contraseña.getPassword()));
-        psInsertar.setString(5, tipoUsuario);
-        psInsertar.setString(6, telefono.getText());
-        psInsertar.setString(7, correo.getText());
-        psInsertar.setInt(8, Integer.parseInt(id.getText()));
-        psInsertar.executeUpdate();
     }
 
     @Override

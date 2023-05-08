@@ -1,7 +1,7 @@
 package Metodos;
 
-import Clases.cAdministradorProveedores;
 import Clases.cAlertas;
+import Clases.cGestionarUsuarios;
 import Formularios.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -13,11 +13,7 @@ import javax.swing.*;
 public class mGestionarUsuarios extends mGenerales {
 
     private final cAlertas oA = new cAlertas();
-    private final cAdministradorProveedores oAP = new cAdministradorProveedores();
-//    private Connection con;
-//    private Statement st;
-//    private ResultSet rs, rsUsuarios;
-//    private DefaultTableModel modelo;
+    private final cGestionarUsuarios oGU = new cGestionarUsuarios();
     private mRegistroUsuarios ru;
     private final frmAdministradorGestionarUsuarios fagu;
     private final JTable usuarios;
@@ -84,8 +80,8 @@ public class mGestionarUsuarios extends mGenerales {
         upd.addActionListener((ActionEvent e) -> {
             if (usuarios.getSelectedRow() != -1) {
 
-                if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (oAP.Conectado()) {
+                if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {                   
+                    if (oGU.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -95,7 +91,7 @@ public class mGestionarUsuarios extends mGenerales {
                         fagu.dispose();
                     }
                 } else {
-                    if (oAP.Conectado()) {
+                    if (oGU.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -115,12 +111,12 @@ public class mGestionarUsuarios extends mGenerales {
         dlt.addActionListener((ActionEvent e) -> {
             if (usuarios.getSelectedRow() != -1) {
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (oAP.Conectado()) {
+                    if (oGU.Conectado()) {
                         if (oA.confirmación("¿Eliminar usuario?") == 0) {
                             String user = usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString();
-                            oAP.EliminarUsuario(user);
+                            oGU.EliminarUsuario(user);
                             oA.aviso("Usuario eliminado.");
-                            oAP.MostrarUsuarios(usuarios.getModel());
+                            oGU.MostrarUsuarios(usuarios.getModel());
                         }
                     } else {
                         new mLogueo().CargarFrame();
@@ -151,7 +147,7 @@ public class mGestionarUsuarios extends mGenerales {
         fagu.setVisible(true);
         fagu.setLocationRelativeTo(null);
         Close();
-        oAP.MostrarUsuarios(usuarios.getModel());
+        oGU.MostrarUsuarios(usuarios.getModel());
         Opciones();
         dobleClick();
     }

@@ -11,10 +11,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,59 +30,109 @@ import javax.swing.table.DefaultTableModel;
  */
 public class frmAdministradorProductos extends javax.swing.JFrame {
 
-    ResultSet rsProductos,rsProveedores,rsCategorias,rsIndice,rsCantidad,rsPrecio;
-    cAdministradorProductos oProductos = new cAdministradorProductos();
-    cInfoProductos oInfo = new cInfoProductos();
-    DefaultTableModel modelo;
-    Object[] c = new Object[3];
-    ArrayList<String> productos, categorias, prov;
+//    ResultSet rsProductos,rsProveedores,rsCategorias,rsIndice,rsCantidad,rsPrecio;
+//    cAdministradorProductos oProductos = new cAdministradorProductos();
+//    cInfoProductos oInfo = new cInfoProductos();
+//    DefaultTableModel modelo;
+//    Object[] c = new Object[3];
+//    ArrayList<String> productos, categorias, prov;
     
     
     public frmAdministradorProductos() {
         initComponents();
-        Mostrar();
-        this.setLocationRelativeTo(null);
-        rsProductos = null;
-        rsProveedores = null;
-        rsCategorias = null;
-        rsIndice = null;
-        rsCantidad = null;
-        rsPrecio = null;
-        modelo = new DefaultTableModel();
-        productos = new ArrayList<>();
-        categorias = new ArrayList<>();
-        prov = new ArrayList<>();
-        MostrarProveedores();
-        MostrarCategorias();
-        Opciones();
-        Close();
     }
-    
-    private void Mostrar() {
-        try {
-            
-           rsProductos = oProductos.ListaProductos();
-           Object[] proveedores = new Object[4];          
-           modelo = (DefaultTableModel) jtbProductos.getModel(); //modelo Creamos un Objeto de la clase Default...
-           
-           modelo.setRowCount(0);
-           
-           while (rsProductos.next())
-           {
-               proveedores[0] = rsProductos.getInt("IdProducto");
-               proveedores[1] = rsProductos.getString("Nombre");
-               proveedores[2] = rsProductos.getString("Categoria");
-               proveedores[3] = rsProductos.getString("Stock");
 
-               modelo.addRow(proveedores); //Va aderiendo en nuestro DefaultTableModel "modelo"
-           }
-           jtbProductos.setModel(modelo);
-        }
-        catch (SQLException |ClassNotFoundException ex) {
-            System.err.println(ex);
-        }
+    public ButtonGroup getbGrupo1() {
+        return bGrupo1;
+    }
+
+    public ButtonGroup getbGrupo2() {
+        return bGrupo2;
+    }
+
+    public ButtonGroup getbGrupo3() {
+        return bGrupo3;
+    }
+
+    public JButton getBtnRCategoria() {
+        return btnRCategoria;
+    }
+
+    public JButton getBtnRProducto() {
+        return btnRProducto;
+    }
+
+    public JComboBox<String> getCbCategoria() {
+        return cbCategoria;
+    }
+
+    public JComboBox<String> getCbProducto() {
+        return cbProducto;
+    }
+
+    public JComboBox<String> getCbProveedor() {
+        return cbProveedor;
+    }
+
+    public JTable getJtbProductos() {
+        return jtbProductos;
+    }
+
+    public JPopupMenu getPmOpciones() {
+        return pmOpciones;
+    }
+
+    public JRadioButton getRbElegir1() {
+        return rbElegir1;
+    }
+
+    public JRadioButton getRbElegir2() {
+        return rbElegir2;
+    }
+
+    public JRadioButton getRbEscribir1() {
+        return rbEscribir1;
+    }
+
+    public JRadioButton getRbEscribir2() {
+        return rbEscribir2;
+    }
+
+    public JRadioButton getRbKilos() {
+        return rbKilos;
+    }
+
+    public JRadioButton getRbUnidades() {
+        return rbUnidades;
+    }
+
+    public JTextField getTxtCKilogramos() {
+        return txtCKilogramos;
+    }
+
+    public JTextField getTxtCUnidades() {
+        return txtCUnidades;
+    }
+
+    public JTextField getTxtCategoria() {
+        return txtCategoria;
+    }
+
+    public JTextField getTxtFecha() {
+        return txtFecha;
+    }
+
+    public JTextField getTxtId() {
+        return txtId;
+    }
+
+    public JTextField getTxtPrecio() {
+        return txtPrecio;
+    }
+
+    public JTextField getTxtProducto() {
+        return txtProducto;
     } 
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -399,49 +456,49 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rbElegir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbElegir1MouseClicked
-        cbCategoria.setEnabled(true);
-        txtCategoria.setEnabled(false);
-        rbElegir2.setEnabled(true);
+//        cbCategoria.setEnabled(true);
+//        txtCategoria.setEnabled(false);
+//        rbElegir2.setEnabled(true);
 
     }//GEN-LAST:event_rbElegir1MouseClicked
 
     private void rbEscribir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbEscribir1MouseClicked
-        cbCategoria.setEnabled(false);
-        txtCategoria.setEnabled(true);
-        rbElegir2.setEnabled(false);
-        cbProducto.setEnabled(false);
+//        cbCategoria.setEnabled(false);
+//        txtCategoria.setEnabled(true);
+//        rbElegir2.setEnabled(false);
+//        cbProducto.setEnabled(false);
     }//GEN-LAST:event_rbEscribir1MouseClicked
 
     private void rbElegir2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbElegir2MouseClicked
-        if(rbElegir2.isEnabled()){
-            cbProducto.setEnabled(true);
-            txtProducto.setEnabled(false);
-            txtId.setEnabled(false);
-        }
+//        if(rbElegir2.isEnabled()){
+//            cbProducto.setEnabled(true);
+//            txtProducto.setEnabled(false);
+//            txtId.setEnabled(false);
+//        }
     }//GEN-LAST:event_rbElegir2MouseClicked
 
     private void rbEscribir2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbEscribir2MouseClicked
-        cbProducto.setEnabled(false);
-        txtProducto.setEnabled(true);
-        txtId.setEnabled(true);
+//        cbProducto.setEnabled(false);
+//        txtProducto.setEnabled(true);
+//        txtId.setEnabled(true);
     }//GEN-LAST:event_rbEscribir2MouseClicked
 
     private void rbKilosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbKilosMouseClicked
-        if((rbElegir1.isSelected()||rbEscribir1.isSelected())&&(rbElegir2.isSelected()||rbEscribir2.isSelected())){
-            rbKilos.setEnabled(true);
-            rbUnidades.setEnabled(false);
-            txtCKilogramos.setEnabled(true);
-            txtCUnidades.setEnabled(false);
-        }   
+//        if((rbElegir1.isSelected()||rbEscribir1.isSelected())&&(rbElegir2.isSelected()||rbEscribir2.isSelected())){
+//            rbKilos.setEnabled(true);
+//            rbUnidades.setEnabled(false);
+//            txtCKilogramos.setEnabled(true);
+//            txtCUnidades.setEnabled(false);
+//        }   
     }//GEN-LAST:event_rbKilosMouseClicked
 
     private void rbUnidadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rbUnidadesMouseClicked
-        if((rbElegir1.isSelected()||rbEscribir1.isSelected())&&(rbElegir2.isSelected()||rbEscribir2.isSelected())){
-            rbUnidades.setEnabled(true);
-            rbKilos.setEnabled(false);
-            txtCKilogramos.setEnabled(false);
-            txtCUnidades.setEnabled(true);
-        }
+//        if((rbElegir1.isSelected()||rbEscribir1.isSelected())&&(rbElegir2.isSelected()||rbEscribir2.isSelected())){
+//            rbUnidades.setEnabled(true);
+//            rbKilos.setEnabled(false);
+//            txtCKilogramos.setEnabled(false);
+//            txtCUnidades.setEnabled(true);
+//        }
     }//GEN-LAST:event_rbUnidadesMouseClicked
 
     private void cbProductoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbProductoMouseClicked
@@ -486,7 +543,7 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
 
     private void btnRProductoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRProductoMouseClicked
         
-        if(Validar()&&CompararId()){
+        if(Validar()){
             if(rbElegir1.isSelected()&&rbElegir2.isSelected()){
                 try {
                     //Un producto existente tendrá un nuevo proveedor
@@ -620,33 +677,13 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
             }
             cbCategoria.setSelectedItem(null);
           }
-        catch (SQLException|ClassNotFoundException ex) {
-            System.err.println(ex);
-        }
-    }
-    public final void MostrarProductos(){
-        try {
-            rsProductos = oProductos.ListarProductos();
-            if(rsProductos.next()){ //Verificar si está vacío, pero desplaza el puntero al siguiente elemento
-                //rsProductos.beforeFirst(); Esto regresa el puntero al inicio para no perder el 1er dato
-                do {  
-                    cbProducto.addItem(rsProductos.getString("Nombre"));
-                }while(rsProductos.next());
-                cbProducto.setSelectedItem(null);
-            }else{
-                JOptionPane.showMessageDialog(null, "No hay productos en esta categoría.");
-            }
-        }catch (SQLException|ClassNotFoundException ex) {
+        catch (SQLException ex) {
             System.err.println(ex);
         }
     }
     
-    public void ContinuarRegistro(){
-        oProductos.setPrecio(txtPrecio.getText());
-        oProductos.setIdProducto(Integer.parseInt(txtId.getText()));
-        oProductos.setFechaCaducidad(txtFecha.getText());
-        oProductos.setProveedor(cbProveedor.getSelectedItem().toString());
-    }
+    
+    
     
     public boolean Validar(){
         
@@ -660,25 +697,6 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
         }
         return v;
         
-    }
-    
-    public final void Close(){
-        addWindowListener(new WindowAdapter(){
-            @Override
-            public void windowClosing(WindowEvent evt){
-                Toolkit.getDefaultToolkit().beep();
-                String b[] = {"Aceptar","Cancelar"};
-                int e = JOptionPane.showOptionDialog(null,
-                    " ¿Salir?"," Confirmar", JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,icono("/Resources/den.png",30,30), 
-                    b, b[1]);
-                if(e==0){
-                    frmAdministrador oFA = new frmAdministrador();
-                    oFA.setVisible(true);
-                    dispose(); 
-                }
-            }  
-        }); 
     }
     
     private void Opciones(){
@@ -774,87 +792,23 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
         });
     }
     
-    private void Limpiar(){
-        bGrupo1.clearSelection();
-        bGrupo2.clearSelection();
-        bGrupo3.clearSelection();
-        rbElegir2.setEnabled(false);
-        rbUnidades.setEnabled(false);
-        rbKilos.setEnabled(false);
-        txtProducto.setEnabled(false);
-        txtPrecio.setEnabled(false);
-        txtId.setEnabled(false);
-        txtCKilogramos.setEnabled(false);
-        txtFecha.setEnabled(false);
-        cbProducto.setEnabled(false);
-        txtCategoria.setText(null);
-        txtProducto.setText(null);
-        txtCUnidades.setText(null);
-        txtCKilogramos.setText(null);
-        txtPrecio.setText(null);
-        txtId.setText(null);
-        txtFecha.setText(null);
-        cbCategoria.setSelectedIndex(-1);
-        cbProducto.setSelectedIndex(-1);
-        cbProveedor.setSelectedIndex(-1);
-    }
-    
-    private boolean CompararId(){
-        //En caso no quiera usar id incrementable
-        int fila = jtbProductos.getRowCount();
-        int i;
-        boolean b = true;
-        String[] valores = new String[fila];
-        for (i=0; i < fila;i++) {
-            valores [i] = jtbProductos.getValueAt(i, 0).toString();
-            if(valores[i].equals(txtId.getText())){
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(null,"El ID ya está en uso.");
-                b = false;
-                i=fila;
-            }
-        } 
-        return b;
-    }
-    
-    public Icon icono(String path, int width, int height){
-        //Método para obtener atributos de la imagen como "Icon".
-        Icon ic = new ImageIcon(new ImageIcon(this.getClass().getResource(path))
-        .getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
-        return ic;
-    }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmAdministradorProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmAdministradorProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmAdministradorProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmAdministradorProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new frmAdministradorProductos().setVisible(true);
-        });
-    }
+//    private boolean CompararId(){
+//        //En caso no quiera usar id incrementable
+//        int fila = jtbProductos.getRowCount();
+//        int i;
+//        boolean b = true;
+//        String[] valores = new String[fila];
+//        for (i=0; i < fila;i++) {
+//            valores [i] = jtbProductos.getValueAt(i, 0).toString();
+//            if(valores[i].equals(txtId.getText())){
+//                Toolkit.getDefaultToolkit().beep();
+//                JOptionPane.showMessageDialog(null,"El ID ya está en uso.");
+//                b = false;
+//                i=fila;
+//            }
+//        } 
+//        return b;
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bGrupo1;
@@ -877,7 +831,7 @@ public class frmAdministradorProductos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    public static javax.swing.JTable jtbProductos;
+    private javax.swing.JTable jtbProductos;
     private javax.swing.JPopupMenu pmOpciones;
     private javax.swing.JRadioButton rbElegir1;
     private javax.swing.JRadioButton rbElegir2;
