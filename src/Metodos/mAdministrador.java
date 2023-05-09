@@ -92,7 +92,7 @@ public class mAdministrador extends mGenerales {
             public void mouseClicked(MouseEvent evt) {
                 if (oAd.ComprobarConexion()) {
                     a.dispose();
-//                    new frmAdministradorProductos().setVisible(true);
+                    new mProductos().CargarFrame();
                 } else {
                     a.dispose();
                     new mLogueo().CargarFrame();

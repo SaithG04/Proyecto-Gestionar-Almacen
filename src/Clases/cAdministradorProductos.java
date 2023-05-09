@@ -2,6 +2,7 @@ package Clases;
 
 import Metodos.mLogueo;
 import Metodos.mSQL;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +13,11 @@ import java.util.List;
  */
 public class cAdministradorProductos extends mSQL {
 
-    private String categoria;
-    private String producto;
-    private int cantidad;
-    private String precio;
-    private String fechaCaducidad;
-    private String proveedor;
     private int idProducto;
+    private String producto;
+    private String categoria;
+    private BigDecimal cantidad;
+
     private final cAlertas oA = new cAlertas();
 
     Connection con;//Conectar a la base de datos
@@ -42,36 +41,12 @@ public class cAdministradorProductos extends mSQL {
         this.producto = producto;
     }
 
-    public int getCantidad() {
+    public BigDecimal getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(BigDecimal cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public String getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(String precio) {
-        this.precio = precio;
-    }
-
-    public String getFechaCaducidad() {
-        return fechaCaducidad;
-    }
-
-    public void setFechaCaducidad(String fechaCaducidad) {
-        this.fechaCaducidad = fechaCaducidad;
-    }
-
-    public String getProveedor() {
-        return proveedor;
-    }
-
-    public void setProveedor(String proveedor) {
-        this.proveedor = proveedor;
     }
 
     public int getIdProducto() {
@@ -83,6 +58,7 @@ public class cAdministradorProductos extends mSQL {
     }
 
     public Object[][] ListarProductos() {
+
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
@@ -95,74 +71,65 @@ public class cAdministradorProductos extends mSQL {
                 prod[0] = rsProductos.getInt("IdProducto");
                 prod[1] = rsProductos.getString("Nombre");
                 prod[2] = rsProductos.getString("Categoria");
-                prod[3] = rsProductos.getString("Stock");
+                prod[3] = rsProductos.getBigDecimal("Stock");
                 productosList.add(prod);
             }
 
-            Object[][] productos = new Object[productosList.size()][4];
-            productosList.toArray(productos);
-
-            return productos;
+            return productosList.toArray(new Object[productosList.size()][4]);
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
-
         return null;
     }
 
-    public ResultSet ListarProveedores() {
-
+    public List<String> ListarProveedores() {
+        List<String> prov = new ArrayList<>();
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
             rs = st.executeQuery("Select * from proveedores");
-
-            return rs;
+            while (rs.next()) {
+                prov.add(rs.getString("Razon_Social"));
+            }
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
-        return null;
+        return prov;
     }
 
-    public ResultSet ListarCategorias() {
+    public List<String> ListarCategorias() {
+        List<String> elementosUnicos = new ArrayList<>();
 
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
-            rs = st.executeQuery("Select * from categorias");
+            String sql = "SELECT DISTINCT Categoria FROM productos";
+            rs = st.executeQuery(sql);
 
-            return rs;
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.getMessage());
+            while (rs.next()) {
+                String elemento = rs.getString("Categoria");
+                elementosUnicos.add(elemento);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            oA.errorC(e.getMessage());
         }
-        return null;
+        return elementosUnicos;
     }
 
-    public ResultSet ListarProductosPorCategoria() {
-
+    public List<String> ListarProductosPorCategoria() {
+        List<String> elementos = new ArrayList<>();
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
             rs = st.executeQuery("Select * from productos where Categoria='" + categoria + "'");
-
-            return rs;
+            while (rs.next()) {
+                elementos.add(rs.getString("Nombre"));
+            }
+            return elementos;
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
         return null;
-    }
-
-    public void NuevaCategoria() {
-
-        try {
-            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-
-            psInsertar = con.prepareStatement("INSERT INTO categorias(Categoria) VALUES (?)");
-            psInsertar.setString(1, categoria);
-            psInsertar.executeUpdate();
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.getMessage());
-        }
     }
 
     public void InsertarNuevo() {
@@ -171,74 +138,96 @@ public class cAdministradorProductos extends mSQL {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
 
             psInsertar = con.prepareStatement("INSERT INTO productos(IdProducto,Nombre,Categoria,Stock) VALUES (?,?,?,?)");
-            psInsertar.setInt(1, idProducto);
+            psInsertar.setInt(1, 0);
             psInsertar.setString(2, producto);
             psInsertar.setString(3, categoria);
-            psInsertar.setInt(4, cantidad);
+            psInsertar.setBigDecimal(4, cantidad);
             psInsertar.executeUpdate();
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
     }
 
-    public void InsertarPrecioDeNuevo() {
-
+//    public int ObtIdProducto() {
+//
+//        try {
+//            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
+//            st = con.createStatement();
+//            rs = st.executeQuery("Select * from productos where Nombre='" + producto + "'");
+//            if (rs.next()) {
+//                return rs.getInt("IdProducto");
+//            }
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            oA.errorC(ex.getMessage());
+//        }
+//        return 0;
+//    }
+//    public int ObtCant() {
+//
+//        try {
+//            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
+//            st = con.createStatement();
+//            rs = st.executeQuery("Select * from productos where Nombre= '" + producto + "'");
+//            return rs.getInt("Stock");
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            oA.errorC(ex.getMessage());
+//        }
+//        return 0;
+//    }
+    public void AgregarStock() {
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-
-            psInsertar = con.prepareStatement("INSERT INTO precios(IdPrecio,Producto,Proveedor,Precio,FechaCaducidad) VALUES (?,?,?,?,?)");
-            psInsertar.setInt(1, 0);
-            psInsertar.setString(2, producto);
-            psInsertar.setString(3, proveedor);
-            psInsertar.setString(4, precio);
-            psInsertar.setString(5, fechaCaducidad);
-            psInsertar.executeUpdate();
+            st = con.createStatement();
+            rs = st.executeQuery("SELECT Stock FROM productos WHERE Nombre= '" + producto + "'");
+            while (rs.next()) {
+                BigDecimal Oldstock = rs.getBigDecimal("Stock");
+                cantidad = Oldstock.add(cantidad);
+                psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
+                psInsertar.setBigDecimal(1, cantidad);
+                psInsertar.setString(2, producto);
+                psInsertar.executeUpdate();
+            }
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
     }
 
-    public void InsertarPrecioDeExistente() {
-
-        try {
-            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-
-            psInsertar = con.prepareStatement("INSERT INTO precios(IdPrecio,Producto,Proveedor,Precio,FechaCaducidad) VALUES (?,?,?,?,?)");
-            psInsertar.setInt(1, 0);
-            psInsertar.setString(2, producto);
-            psInsertar.setString(3, proveedor);
-            psInsertar.setString(4, precio);
-            psInsertar.setString(5, fechaCaducidad);
-            psInsertar.executeUpdate();
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.getMessage());
-        }
-    }
-
-    public ResultSet ObtCant() {
+    public void DisminuirStock() {
 
         try {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
             rs = st.executeQuery("Select Stock from productos where Nombre= '" + producto + "'");
+            while (rs.next()) {
+//                BigDecimal numero1 = new BigDecimal("10.5");
+//                BigDecimal numero2 = new BigDecimal("5.5");
+//
+//                int resultado = numero1.compareTo(numero2);
+//
+//                if (resultado > 0) {
+//                    System.out.println("numero1 es mayor que numero2");
+//                } else if (resultado < 0) {
+//                    System.out.println("numero1 es menor que numero2");
+//                } else {
+//                    System.out.println("numero1 es igual a numero2");
+//                }
 
-            return rs;
+                BigDecimal stock = rs.getBigDecimal("Stock");
+                if (stock.compareTo(cantidad) < 0) {
+                    oA.error("Stock insuficiente.", "");
+                } else {
+                    cantidad = stock.subtract(cantidad);
+                    psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
+                    psInsertar.setBigDecimal(1, cantidad);
+                    psInsertar.setString(2, producto);
+                    psInsertar.executeUpdate();
+                    oA.aviso("Stock modificado correctamente");
+                }
+            }
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
-        return null;
-    }
 
-    public void AgStock() {
-        try {
-            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-            psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
-            psInsertar.setInt(1, cantidad);
-            psInsertar.setString(2, producto);
-            psInsertar.executeUpdate();
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.getMessage());
-        }
     }
 
     public void EliminarProducto() {
@@ -247,26 +236,8 @@ public class cAdministradorProductos extends mSQL {
             con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
             st = con.createStatement();
             st.executeUpdate("DELETE FROM productos WHERE IdProducto='" + idProducto + "'");
-//            st.executeUpdate("DELETE FROM precios WHERE Producto='" + producto + "'");
         } catch (ClassNotFoundException | SQLException ex) {
             oA.errorC(ex.getMessage());
         }
     }
-
-//    public int NumProductos() {
-//        try {
-//            con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-//            st = con.createStatement();
-//            rs = st.executeQuery("SELECT COUNT(*) AS num_filas FROM productos");//Cantidad de productos
-//            
-//            int totalFilas = 0;
-//            if (rs.next()) {
-//                totalFilas = rs.getInt("num_filas");             
-//            }
-//            return totalFilas;
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            oA.errorC(ex.getMessage());
-//        }
-//        return 0;
-//    }
 }

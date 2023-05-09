@@ -195,7 +195,7 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -203,11 +203,12 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return false;
             }
         });
         jtbProveedores.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtbProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jtbProveedores.setFocusable(false);
         jtbProveedores.setSelectionBackground(new java.awt.Color(153, 255, 153));
         jtbProveedores.setSelectionForeground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(jtbProveedores);
@@ -328,7 +329,7 @@ public class frmAdministradorProveedores extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSpinner1;
-    public javax.swing.JTable jtbProveedores;
+    private javax.swing.JTable jtbProveedores;
     private javax.swing.JTextField txtContacto;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtEmail;

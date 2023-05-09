@@ -41,13 +41,13 @@ public class cLogueo extends mSQL {
     public String iniciarSesion(String user, String contrasena) {
         try {
             Connection con = Conectar();
-            st = con.prepareStatement("Select username from usuarios where username= '" + user + "'");
+            st = con.prepareStatement("Select username from usuarios where username COLLATE utf8_bin = '" + user + "'"); //utf8_bin para dif MAY de MIN
             rs = st.executeQuery();
             if (rs.next()) { //Validar usuario
-                st = con.prepareStatement("Select contraseña from usuarios where username= '" + user + "' and contraseña= '" + contrasena + "'");
+                st = con.prepareStatement("Select contraseña from usuarios where username COLLATE utf8_bin = '" + user + "' and contraseña COLLATE utf8_bin = '" + contrasena + "'");
                 rs = st.executeQuery();
                 if (rs.next()) { //Validar contraseña
-                    st = con.prepareStatement("Select tipo_usuario from usuarios where username = '" + user + "'");
+                    st = con.prepareStatement("Select tipo_usuario from usuarios where username COLLATE utf8_bin = '" + user + "'");
                     rs = st.executeQuery();
                     while (rs.next()) { //Verificar permisos de cuenta
                         String tu = rs.getString("tipo_usuario");
