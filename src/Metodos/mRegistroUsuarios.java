@@ -43,48 +43,48 @@ public class mRegistroUsuarios extends mGenerales {
                 if (admin.isSelected()) {
                     oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
                             String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                    oRU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                    oRU.RegistrarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
                     oRU.Registrar(oU, CREARUSER);
                     Limpiar();
-//                    oA.aviso("Correcto");
+                    oA.aviso("Registro exitoso");
                 } else {
                     oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
                             String.valueOf(contraseña.getPassword()), "usuario", telefono.getText(), correo.getText());
                     oRU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
                     oRU.Registrar(oU, CREARUSER);
                     Limpiar();
-//                    oA.aviso("Correcto");
+                    oA.aviso("Registro exitoso");
                 }
-            } else {
+            } else { //MODIFICANDO
                 if (admin.isSelected()) {
                     if (usuario.getText().equals(mLogueo.oL.getUsuario())) {
                         oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
-                                String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        JOptionPane.showMessageDialog(null, "Inicie sesión nuevamente");
+                                String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());                     
                         oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
                                 usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
                         oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                        oA.aviso("Inicie sesión nuevamente");
                         fru.dispose();
                         new mLogueo().CargarFrame();
                     } else {
                         oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                 String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        
+
                         oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
                         oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
                                 usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
-//                        oA.aviso("Correcto");
+                        oA.aviso("Usuario modificado correctamente.");
                         fru.dispose();
                         new mGestionarUsuarios().CargarFrame();
                     }
-                } else if (user.isSelected()) {
+                } else { //if (user.isSelected())
                     oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(),
                             usuario.getText(), String.valueOf(contraseña.getPassword()),
                             "usuario", telefono.getText(), correo.getText());
                     oRU.ModificarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
                     oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
                             usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
-//                    oA.aviso("Correcto");
+                    oA.aviso("Usuario modificado correctamente.");
                     fru.dispose();
                     new mGestionarUsuarios().CargarFrame();
                 }
@@ -180,12 +180,6 @@ public class mRegistroUsuarios extends mGenerales {
         return true;
     }
 
-    public boolean IfNotEmpty() {
-        return nombres.getText().isEmpty() || apellidos.getText().isEmpty() || telefono.getText().isEmpty() || correo.getText().isEmpty()
-                || usuario.getText().isEmpty() || String.valueOf(contraseña.getPassword()).isEmpty()
-                || (!user.isSelected() && !admin.isSelected());
-    }
-
     public void Limpiar() {
         id.setText(null);
         nombres.setText(null);
@@ -242,19 +236,18 @@ public class mRegistroUsuarios extends mGenerales {
             @Override
             public void windowClosing(WindowEvent evt) {
 
-                if (IfNotEmpty()) {
-                    if (aceptar.getText().equalsIgnoreCase("registrar")) {
-                        oA.confCerrar(fru, "administrador");
-                    } else {
-                        oA.confCerrar(fru, "gestUsuarios");
+                if (aceptar.getText().equalsIgnoreCase("registrar")) {
+                    if (oA.confirmación("¿Salir?") == 0) {
+                        fru.dispose();
+                        new mAdministrador().CargarFrame();
                     }
                 } else {
-                    if (aceptar.getText().equalsIgnoreCase("registrar")) {
-                        oA.confCerrar(fru, "administrador");
-                    } else {
-                        oA.confCerrar(fru, "gestUsuarios");
+                    if (oA.confirmación("¿Salir?") == 0) {
+                        fru.dispose();
+                        new mGestionarUsuarios().CargarFrame();
                     }
                 }
+
             }
         });
     }

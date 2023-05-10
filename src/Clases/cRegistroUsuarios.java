@@ -1,17 +1,15 @@
 package Clases;
 
 import Metodos.mLogueo;
-import Metodos.mSQL;
 import java.sql.*;
 
 /**
  *
  * @author isai_
  */
-public class cRegistroUsuarios extends mSQL{
+public class cRegistroUsuarios extends cSQL{
     
     private final cAlertas oA = new cAlertas();
-//    private cUsuarios oU;
     private Connection con;
     private Statement st;
     private PreparedStatement psInsertar;
@@ -27,7 +25,7 @@ public class cRegistroUsuarios extends mSQL{
             % - Conexion Remota.
             localhost - Conexion Local.
             */
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
     }
@@ -39,7 +37,7 @@ public class cRegistroUsuarios extends mSQL{
             st.execute("CREATE USER '" + usuario + "'@'%' IDENTIFIED BY '" + String.valueOf(contraseña) + "'");
             st.execute("GRANT ALL PRIVILEGES ON * . * TO '" + usuario + "'@'%'");
             st.execute("GRANT GRANT OPTION ON * . * TO '" + usuario + "'@'%'");
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
     }
@@ -52,7 +50,7 @@ public class cRegistroUsuarios extends mSQL{
             st.execute("REVOKE ALL PRIVILEGES ON * . * FROM '" + usuario + "'@'%'");
             st.execute("GRANT SELECT ON * . * TO '" + usuario + "'@'%'");
             st.execute("SET PASSWORD FOR '" + usuario + "'@'%' = PASSWORD('" + contraseña + "')");
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
     }
@@ -65,7 +63,7 @@ public class cRegistroUsuarios extends mSQL{
             st.execute("GRANT ALL PRIVILEGES ON * . * TO '" + usuario + "'@'%'");
             st.execute("GRANT GRANT OPTION ON * . * TO '" + usuario + "'@'%'");
             st.execute("SET PASSWORD FOR '" + usuario + "'@'%' = PASSWORD('" + contraseña + "')");
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
 
@@ -85,8 +83,7 @@ public class cRegistroUsuarios extends mSQL{
             psInsertar.setString(7, usuario.getTelefono());
             psInsertar.setString(8, usuario.getCorreo());
             psInsertar.executeUpdate();
-            oA.aviso("Correcto");
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
     }
@@ -105,8 +102,7 @@ public class cRegistroUsuarios extends mSQL{
             psInsertar.setString(7, correo);
             psInsertar.setInt(8, id);
             psInsertar.executeUpdate();
-            oA.aviso("Correcto");
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.toString());
         }
     }

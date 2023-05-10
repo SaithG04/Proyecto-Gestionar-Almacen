@@ -39,6 +39,7 @@ public class mLogueo extends mGenerales implements ActionListener {
         });
     }
 
+    //VALIDAR INTENTOS
     //Validar inicio de sesión en caso de existir usuario y contraseña
     public void iniciarSesion() {
         String user = txtUsuario.getText();

@@ -1,11 +1,10 @@
 package Clases;
 
 import Metodos.mLogueo;
-import Metodos.mSQL;
 import java.sql.*;
 import javax.swing.table.*;
 
-public class cAdministradorProveedores extends mSQL {
+public class cAdministradorProveedores extends cSQL {
 
     //Atributos
     private int idProveedor;
@@ -109,14 +108,13 @@ public class cAdministradorProveedores extends mSQL {
     }
 
     public boolean Conectado() {
-
         try {
             Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException ex) {
+            return true;
+        } catch (Exception ex) {
             oA.errorC(ex.toString());
             return false;
         }
-        return true;
     }
 
     public DefaultTableModel AgregarProveedor(TableModel modelo) {
@@ -180,8 +178,7 @@ public class cAdministradorProveedores extends mSQL {
                 ActDep();
             }
             this.razonSocial = razonSocial;
-            EliminarProveedor();          
-            EliminarDePrecio();
+            EliminarProveedor();
             DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
             oA.aviso("El proveedor ha sido eliminado correctamente.");
             return MostrarProveedores;
@@ -265,8 +262,16 @@ public class cAdministradorProveedores extends mSQL {
         psInsertar.setString(2, ruc);
         psInsertar.setString(3, direccion);
         psInsertar.setString(4, contacto);
-        psInsertar.setString(5, telefono);
-        psInsertar.setString(6, email);
+        if (telefono.isEmpty() && email.isEmpty()) {
+            psInsertar.setString(5, null);
+            psInsertar.setString(6, null);
+        } else if (!telefono.isEmpty() && email.isEmpty()) {
+            psInsertar.setString(5, telefono);
+            psInsertar.setString(6, null);
+        } else {
+            psInsertar.setString(5, telefono);
+            psInsertar.setString(6, email);
+        }
         psInsertar.setString(7, departamento);
         psInsertar.setInt(8, idProveedor);
         psInsertar.executeUpdate();
@@ -282,8 +287,16 @@ public class cAdministradorProveedores extends mSQL {
         psInsertar.setString(3, ruc);
         psInsertar.setString(4, direccion);
         psInsertar.setString(5, contacto);
-        psInsertar.setString(6, telefono);
-        psInsertar.setString(7, email);
+        if (telefono.isEmpty() && email.isEmpty()) {
+            psInsertar.setString(6, null);
+            psInsertar.setString(7, null);
+        } else if (!telefono.isEmpty() && email.isEmpty()) {
+            psInsertar.setString(6, telefono);
+            psInsertar.setString(7, null);
+        } else {
+            psInsertar.setString(6, telefono);
+            psInsertar.setString(7, email);
+        }
         psInsertar.setString(8, departamento);
         psInsertar.executeUpdate();
     }
@@ -309,7 +322,7 @@ public class cAdministradorProveedores extends mSQL {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
-        st.executeUpdate("DELETE FROM proveedores WHERE Razon_Social='" + razonSocial +"'");
+        st.executeUpdate("DELETE FROM proveedores WHERE Razon_Social='" + razonSocial + "'");
     }
 
     public ResultSet ListarDepartamentos() throws SQLException, ClassNotFoundException {
@@ -326,29 +339,5 @@ public class cAdministradorProveedores extends mSQL {
         st = con.createStatement();
         rs = st.executeQuery("Select * from productos");
         return rs;
-    }
-
-//    public ResultSet Reporte() throws SQLException, ClassNotFoundException {
-//
-//        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-//        st = con.createStatement();
-//        rs = st.executeQuery("Select * from proveedores");
-//        return rs;
-//    }
-
-//    public ResultSet ObtRespuesta() throws ClassNotFoundException, SQLException {
-//
-//        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-//        st = con.createStatement();
-//        rs = st.executeQuery("Select Proveedor from productos");
-//
-//        return rs;
-//    }
-
-    public void EliminarDePrecio() throws SQLException, ClassNotFoundException {
-
-        con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        st = con.createStatement();
-        st.executeUpdate("DELETE FROM precios WHERE IdProveedor=" + idProveedor);
     }
 }

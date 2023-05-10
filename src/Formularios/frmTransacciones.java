@@ -8,9 +8,9 @@ import javax.swing.JTable;
  *
  * @author isai_
  */
-public class infoProductos extends javax.swing.JFrame {
+public class frmTransacciones extends javax.swing.JFrame {
 
-    public infoProductos() {
+    public frmTransacciones() {
         initComponents();
     }
     
@@ -20,8 +20,8 @@ public class infoProductos extends javax.swing.JFrame {
        return mGenerales.IMG;
     }
 
-    public JTable getJtbPrecios() {
-        return jtbPrecios;
+    public JTable getJtbTransacciones() {
+        return jtbTransacciones;
     }
 
     @SuppressWarnings("unchecked")
@@ -30,34 +30,34 @@ public class infoProductos extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtbPrecios = new javax.swing.JTable();
+        jtbTransacciones = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Precios");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Transacciones");
         setIconImage(getIconImage());
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jtbPrecios.setBackground(new java.awt.Color(255, 255, 255));
-        jtbPrecios.setForeground(new java.awt.Color(0, 0, 0));
-        jtbPrecios.setModel(new javax.swing.table.DefaultTableModel(
+        jtbTransacciones.setBackground(new java.awt.Color(255, 255, 255));
+        jtbTransacciones.setForeground(new java.awt.Color(0, 0, 0));
+        jtbTransacciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Precio", "Unidad", "Proveedor", "Fecha de Caducidad"
+                "Tipo Transaccion", "Monto", "Cantidad", "Unidad", "Proveedor", "Fecha Caducidad", "Fecha Transaccion", "Usuario"
             }
         ));
-        jScrollPane1.setViewportView(jtbPrecios);
+        jScrollPane1.setViewportView(jtbTransacciones);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 540, 190));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 810, 190));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -70,6 +70,6 @@ public class infoProductos extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jtbPrecios;
+    private javax.swing.JTable jtbTransacciones;
     // End of variables declaration//GEN-END:variables
 }

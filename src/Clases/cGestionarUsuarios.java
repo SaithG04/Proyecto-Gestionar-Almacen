@@ -1,7 +1,6 @@
 package Clases;
 
 import Metodos.mLogueo;
-import Metodos.mSQL;
 import java.sql.*;
 import javax.swing.table.*;
 
@@ -9,25 +8,23 @@ import javax.swing.table.*;
  *
  * @author isai_
  */
-public class cGestionarUsuarios extends mSQL{
-    
+public class cGestionarUsuarios extends cSQL {
+
     private final cAlertas oA = new cAlertas();
     private Connection con;
     private Statement st;
     private ResultSet rs, rsUsuarios;
     private DefaultTableModel modelo;
-    
-    public boolean Conectado() {
 
+    public boolean Conectado() {
         try {
             Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException ex) {
-            oA.errorC(ex.toString());
+            return true;
+        } catch (Exception ex) {
             return false;
         }
-        return true;
     }
-    
+
     public ResultSet ListaUsuarios() throws SQLException, ClassNotFoundException {
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
@@ -42,11 +39,11 @@ public class cGestionarUsuarios extends mSQL{
             st = con.createStatement();
             st.execute("DROP USER '" + user + "'@'%'");
             st.executeUpdate("DELETE FROM usuarios WHERE username='" + user + "'");
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             oA.errorC(ex.getMessage());
         }
     }
-    
+
     public DefaultTableModel MostrarUsuarios(TableModel usuarios) {
 
         try {
@@ -77,5 +74,5 @@ public class cGestionarUsuarios extends mSQL{
         }
         return null;
     }
-    
+
 }

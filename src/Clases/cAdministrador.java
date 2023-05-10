@@ -1,25 +1,22 @@
 package Clases;
 
 import Metodos.mLogueo;
-import Metodos.mSQL;
-import java.sql.SQLException;
 
 /**
  *
  * @author DREP
  */
-public class cAdministrador extends mSQL {
+public class cAdministrador extends cSQL {
 
     cAlertas oA = new cAlertas();
 
     public boolean ComprobarConexion() {
         try {
             Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        } catch (ClassNotFoundException | SQLException e) {
-            oA.errorC(e.toString());
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        return true;
     }
     
 }

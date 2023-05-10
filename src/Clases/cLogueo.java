@@ -1,12 +1,11 @@
 package Clases;
 
-import Metodos.mSQL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class cLogueo extends mSQL {
+public class cLogueo extends cSQL {
 
     public static cLogueo oL;
     private String usuario;
@@ -63,7 +62,7 @@ public class cLogueo extends mSQL {
             } else {
                 return "El usuario no existe.";
             }
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException ex) {
             return ex.getMessage();
         }
         return null;

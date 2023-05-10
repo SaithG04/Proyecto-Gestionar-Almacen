@@ -45,7 +45,11 @@ public class mAdministrador extends mGenerales {
         a.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if(!value) oA.confCerrar(a, "sistema");
+                if(!value){
+                    if(oA.confirmación("¿Salir de la aplicación?") == 0){
+                        System.exit(0);
+                    }
+                }
             }
         });
     }

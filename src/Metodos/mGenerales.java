@@ -17,20 +17,21 @@ public abstract class mGenerales {
     public static final Color COLORERROR = new Color(255, 153, 153);
     public static final String USER = "";
     public static final String PASSWORD = "";
-
+    
     public abstract void CargarFrame();
 
     public abstract void Close();
 
     //Método para obtener atributos de la imagen como "Icon".
-    public Icon icono(String path, int width, int height) {
-        Icon ic = new ImageIcon(new ImageIcon(this.getClass().getResource(path))
-                .getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
+    public static Icon icono(String path, int width, int height) {
+        Image img = new ImageIcon(mGenerales.class.getResource(path))
+                .getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
+        Icon ic = new ImageIcon(img);
         return ic;
     }
 
     //Método para restringir solo carácteres alfabéticos
-    public void validarSoloLetras(KeyEvent evt, String txt, short max) {
+    public void ValidarSoloLetras(KeyEvent evt, String txt, short max) {
 
         int key = evt.getKeyChar();
         boolean mayusculas = key >= 65 && key <= 90;
@@ -52,7 +53,7 @@ public abstract class mGenerales {
     }
 
     //Método para restringir solo carácteres numéricos decimales
-    public void validarValorDecimal(KeyEvent evt, String txt) {
+    public static void validarValorDecimal(KeyEvent evt, String txt) {
         char key = evt.getKeyChar();
         boolean numeros = key >= '0' && key <= '9';
         if (key == '.') {

@@ -4,7 +4,6 @@ import Clases.cAdministradorProveedores;
 import Clases.cAlertas;
 import Formularios.*;
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -156,19 +155,14 @@ public class mProveedores extends mGenerales {
                 colorear3(eliminar, "out");
             }
         });
-        fap.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                int fila = proveedores.getSelectedRow();
-                if (evt.getClickCount() == 2 && fila != -1) {
-                    JOptionPane.showMessageDialog(null, proveedores.getValueAt(fila, proveedores.getSelectedColumn()).toString());
-                }
-            }
-        });
         proveedores.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 Seleccionar();
+                int fila = proveedores.getSelectedRow();
+                if (evt.getClickCount() == 2 && fila != -1) {
+                    oA.info(proveedores.getValueAt(fila, proveedores.getSelectedColumn()).toString());
+                }
             }
         });
     }
@@ -189,7 +183,7 @@ public class mProveedores extends mGenerales {
         contacto.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                validarSoloLetras(e, contacto.getText(), (short) 200);
+                ValidarSoloLetras(e, contacto.getText(), (short) 200);
             }
         });
         razonSocial.addKeyListener(new KeyAdapter() {
@@ -222,102 +216,69 @@ public class mProveedores extends mGenerales {
 
     void Seleccionar() {
         int fila = proveedores.getSelectedRow();
-        if (Conf() == true && oProveedores.Conectado()) {
+        if (Conf() && oProveedores.Conectado()) {
             int EncontrarDepartamento = oProveedores.EncontrarDepartamento(proveedores.getValueAt(fila, 7).toString());
             id.setText(proveedores.getValueAt(fila, 0).toString());
             razonSocial.setText(proveedores.getValueAt(fila, 1).toString());
             ruc.setText(proveedores.getValueAt(fila, 2).toString());
             direccion.setText(proveedores.getValueAt(fila, 3).toString());
             contacto.setText(proveedores.getValueAt(fila, 4).toString());
-            telefono.setText(proveedores.getValueAt(fila, 5).toString());
-            email.setText(proveedores.getValueAt(fila, 6).toString());
+            boolean noTelefono = proveedores.getValueAt(fila, 5) == null;
+            boolean noEmail = proveedores.getValueAt(fila, 6) == null;
+            if (noTelefono && noEmail) {
+                telefono.setText(null);
+                email.setText(null);
+            } else if (!noTelefono && noEmail) {
+                telefono.setText(proveedores.getValueAt(fila, 5).toString());
+                email.setText(null);
+            } else {
+                telefono.setText(proveedores.getValueAt(fila, 5).toString());
+                email.setText(proveedores.getValueAt(fila, 6).toString());
+            }
             departamentos.setSelectedIndex(EncontrarDepartamento);
         }
     }
 
+    boolean E(JTextField tf) {
+        return tf.getText().isEmpty();
+    }
+
     boolean Validar() {
-
-        String RS = razonSocial.getText();
-        String R = ruc.getText();
-        String D = direccion.getText();
-        String C = contacto.getText();
-        String T = telefono.getText();
-        String E = email.getText();
-
-        if (RS.isEmpty() || R.isEmpty() || D.isEmpty() || C.isEmpty() || T.isEmpty() || E.isEmpty()) {
-            Toolkit.getDefaultToolkit().beep();
+        boolean name = departamentos.getSelectedIndex() == -1;
+        if (E(razonSocial) || E(ruc) || E(direccion) || E(contacto) || name) {
             colorear1(razonSocial);
             colorear1(ruc);
             colorear1(direccion);
             colorear1(contacto);
-            colorear1(telefono);
-            colorear1(email);
 
-            if (!E.isEmpty()) {
-                colorear2(email);
-            } else {
-                email.requestFocus();
-                return false;
-            }
-            if (!T.isEmpty()) {
-                colorear2(telefono);
-            } else {
-                telefono.requestFocus();
-                return false;
-            }
-            if (!C.isEmpty()) {
-                colorear2(contacto);
-            } else {
-                contacto.requestFocus();
-                return false;
-            }
-            if (!D.isEmpty()) {
-                colorear2(direccion);
-            } else {
-                direccion.requestFocus();
-                return false;
-            }
-            if (!R.isEmpty()) {
-                colorear2(ruc);
-            } else {
-                ruc.requestFocus();
-                return false;
-            }
-            if (!RS.isEmpty()) {
-                colorear2(razonSocial);
-            } else {
+            if (E(razonSocial)) {
                 razonSocial.requestFocus();
                 return false;
+            } else if (E(ruc)) {
+                colorear2(razonSocial);
+                ruc.requestFocus();
+                return false;
+            } else if (ruc.getText().length() < 11) {
+                colorear2(razonSocial);
+                oA.error("R.U.C. inválido.", "");
+                ruc.requestFocus();
+                return false;
+            } else if (E(direccion)) {
+                colorear2(ruc);
+                direccion.requestFocus();
+                return false;
+            } else if (E(contacto)) {
+                colorear2(direccion);
+                contacto.requestFocus();
+                return false;
+            } else if (name) {
+                colorear2(razonSocial);
+                colorear2(ruc);
+                colorear2(direccion);
+                colorear2(contacto);
+                oA.error("Seleccione un departamento.", "");
+                return false;
             }
-        } else if (departamentos.getSelectedIndex() == -1) {
-            colorear2(razonSocial);
-            colorear2(ruc);
-            colorear2(direccion);
-            colorear2(contacto);
-            colorear2(telefono);
-            colorear2(email);
-            oA.error("Seleccione un departamento.", "");
-            return false;
-        } else if (R.length() < 11) {
-            colorear2(razonSocial);
-            colorear1(ruc);
-            colorear2(direccion);
-            colorear2(contacto);
-            colorear2(telefono);
-            colorear2(email);
-            oA.error("R.U.C. inválido.", "");
-            return false;
-        } else if (T.length() < 9) {
-            colorear2(razonSocial);
-            colorear2(ruc);
-            colorear2(direccion);
-            colorear2(contacto);
-            colorear1(telefono);
-            colorear2(email);
-            oA.error("Número telefónico inválido.", "");
-            return false;
-        } else {
-            colorear2(telefono);
         }
         return true;
     }
@@ -417,7 +378,10 @@ public class mProveedores extends mGenerales {
                 String E = email.getText();
 
                 if (!RS.isEmpty() || !R.isEmpty() || !D.isEmpty() || !C.isEmpty() || !T.isEmpty() || !E.isEmpty()) {
-                    oA.confCerrar(fap, "administrador");
+                    if (oA.confirmación("¿Salir sin guardar?") == 0) {
+                        fap.dispose();
+                        new mAdministrador().CargarFrame();
+                    }
                 } else {
                     fap.dispose();
                     new mAdministrador().CargarFrame();

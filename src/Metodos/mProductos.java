@@ -2,7 +2,7 @@ package Metodos;
 
 import Clases.cAdministradorProductos;
 import Clases.cAlertas;
-import Clases.cPrecio;
+import Clases.cTransaccion;
 import Formularios.frmAdministradorProductos;
 import java.awt.event.*;
 import java.math.BigDecimal;
@@ -21,13 +21,14 @@ public class mProductos extends mGenerales {
     private final JComboBox<String> cbCtg, cbProd, cbProv;
     private final JTable productos;
     private final JPopupMenu pmOpc;
-    private final JRadioButton rbElegir1, rbElegir2, rbEscribir1, rbEscribir2, rbKilos, rbUnidades;
-    private final JTextField cantKilo, cantUni, categoria, fecha, precio, producto;
+    private final JRadioButton rbElegir1, rbElegir2, rbEscribir1, rbEscribir2;
+    private final JTextField stock, categoria, fecha, importe, producto, tipo;
     private final frmAdministradorProductos fAP;
     private final cAlertas oA = new cAlertas();
+    private boolean procede = false;
 
     cAdministradorProductos oProductos = new cAdministradorProductos();
-    cPrecio oP = new cPrecio();
+    cTransaccion oT = new cTransaccion();
     DefaultTableModel modelo;
     Object[] c = new Object[3];
 
@@ -46,14 +47,12 @@ public class mProductos extends mGenerales {
         rbElegir2 = fAP.getRbElegir2();
         rbEscribir1 = fAP.getRbEscribir1();
         rbEscribir2 = fAP.getRbEscribir2();
-        rbKilos = fAP.getRbKilos();
-        rbUnidades = fAP.getRbUnidades();
-        cantKilo = fAP.getTxtCKilogramos();
-        cantUni = fAP.getTxtCUnidades();
+        stock = fAP.getTxtStock();
         categoria = fAP.getTxtCategoria();
         fecha = fAP.getTxtFecha();
-        precio = fAP.getTxtPrecio();
+        importe = fAP.getTxtImporte();
         producto = fAP.getTxtProducto();
+        tipo = fAP.getTxtTipo();
     }
 
     void MouseListeners() {
@@ -90,30 +89,6 @@ public class mProductos extends mGenerales {
                 producto.setEnabled(true);
             }
         });
-        rbKilos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                if ((rbElegir1.isSelected() || rbEscribir1.isSelected()) && (rbElegir2.isSelected() || rbEscribir2.isSelected())) {
-                    rbKilos.setEnabled(true);
-                    rbKilos.setSelected(true);
-                    rbUnidades.setEnabled(false);
-                    cantKilo.setEnabled(true);
-                    cantUni.setEnabled(false);
-                }
-            }
-        });
-        rbUnidades.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                if ((rbElegir1.isSelected() || rbEscribir1.isSelected()) && (rbElegir2.isSelected() || rbEscribir2.isSelected())) {
-                    rbUnidades.setEnabled(true);
-                    rbUnidades.setSelected(true);
-                    rbKilos.setEnabled(false);
-                    cantKilo.setEnabled(false);
-                    cantUni.setEnabled(true);
-                }
-            }
-        });
         cbProd.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
@@ -139,97 +114,116 @@ public class mProductos extends mGenerales {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (Validar()) {
-                    String proveedorS = cbProv.getSelectedItem().toString();
+                    boolean OnlyProduc = !OnlyProduc();
+                    if (OnlyProduc && procede) {
+                        String proveedor = cbProv.getSelectedItem().toString();
+                        BigDecimal cantidad = new BigDecimal(stock.getText());
+                        BigDecimal Import = new BigDecimal(importe.getText());
+                        String uni = tipo.getText();
+                        oProductos.setUnidad(uni);
 
-                    if (rbUnidades.isSelected()) {
-                        oProductos.setCantidad(new BigDecimal(cantUni.getText()));
-                        oP.setUnidad("Und.");
-                    } else {
-                        oProductos.setCantidad(new BigDecimal(cantKilo.getText()));
-                        oP.setUnidad("Kg.");
+                        if (rbElegir1.isSelected() && rbElegir2.isSelected()) {
+                            // Un producto existente tendrá una nueva transaccion
+                            String prod = cbProd.getSelectedItem().toString();
+                            oProductos.setProducto(prod);
+                            oProductos.setCantidad(cantidad);
+                            oProductos.AgregarStock();
+                            InsertarTransaccionNueva(prod, proveedor, Import, cantidad, 
+                                    tipo.getText(), "Compra",fecha.getText());
+                        } else if (rbEscribir2.isSelected() && rbElegir1.isSelected()) {
+                            // Nuevo producto de categoría existente con nueva transaccion
+                            String categoria = cbCtg.getSelectedItem().toString();
+                            String productoNuevo = producto.getText();
+                            oProductos.setProducto(productoNuevo);
+                            oProductos.setCategoria(categoria);
+                            oProductos.setCantidad(cantidad);
+                            oProductos.InsertarNuevo();
+                            InsertarTransaccionNueva(productoNuevo, proveedor, Import, cantidad,
+                                    tipo.getText(), "Compra",fecha.getText());
+                        } else if (rbEscribir2.isSelected() && rbEscribir1.isSelected()) {
+                            // Nuevo producto de nueva categoría con nueva transaccion 
+                            String categoriaNueva = categoria.getText();
+                            String productoNuevo = producto.getText();
+                            oProductos.setProducto(productoNuevo);
+                            oProductos.setCategoria(categoriaNueva);
+                            oProductos.setCantidad(cantidad);
+                            oProductos.InsertarNuevo();
+                            InsertarTransaccionNueva(productoNuevo, proveedor, Import, cantidad,
+                                    tipo.getText(), "Compra",fecha.getText());
+                        }
+                    } else if (!OnlyProduc && procede) {
+                        if (rbEscribir2.isSelected() && rbElegir1.isSelected()) {
+                            // Nuevo producto de categoría existente
+                            String categoria = cbCtg.getSelectedItem().toString();
+                            String productoNuevo = producto.getText();
+                            oProductos.setProducto(productoNuevo);
+                            oProductos.setCategoria(categoria);
+                            oProductos.setCantidad(new BigDecimal(0));
+                            oProductos.InsertarNuevo();
+                            oA.aviso("Registro exitoso");
+                            Limpiar();
+                            MostrarProductos();
+                            MostrarCategorias();
+                        } else if (rbEscribir2.isSelected() && rbEscribir1.isSelected()) {
+                            // Nuevo producto de nueva categoría
+                            String categoriaNueva = categoria.getText();
+                            String productoNuevo = producto.getText();
+                            oProductos.setProducto(productoNuevo);
+                            oProductos.setCategoria(categoriaNueva);
+                            oProductos.setCantidad(new BigDecimal(0));
+                            oProductos.InsertarNuevo();
+                            oA.aviso("Registro exitoso");
+                            Limpiar();
+                            MostrarProductos();
+                            MostrarCategorias();
+                        }
                     }
-
-                    if (rbElegir1.isSelected() && rbElegir2.isSelected()) {
-                        // Un producto existente tendrá un nuevo proveedor
-                        String productoS = cbProd.getSelectedItem().toString();
-                        oProductos.setProducto(productoS);
-                        oProductos.AgregarStock();
-                        
-                        oP.setIdPrecio(0);
-                        oP.setIdProducto(productoS);
-                        oP.setIdproveedor(proveedorS);
-                        oP.setPrecio(new BigDecimal(precio.getText()));
-                        oP.setFecha(fecha.getText());
-                        oP.InsertarPrecio();
-                    } else if (rbEscribir2.isSelected() && rbElegir1.isSelected()) {
-                        // Nuevo producto de categoría existente                  
-                        oProductos.setProducto(producto.getText());
-                        oProductos.setCategoria(cbCtg.getSelectedItem().toString());
-                        oProductos.InsertarNuevo();
-
-                        oP.setIdPrecio(0);
-                        oP.setIdProducto(producto.getText());
-                        oP.setIdproveedor(proveedorS);
-                        oP.setPrecio(new BigDecimal(precio.getText()));
-                        oP.setFecha(fecha.getText());
-                        oP.InsertarPrecio();
-                    } else if (rbEscribir2.isSelected() && rbEscribir1.isSelected()) {
-                        // Nuevo producto de nueva categoría
-                        oProductos.setProducto(producto.getText());
-                        oProductos.setCategoria(categoria.getText());
-                        oProductos.InsertarNuevo();
-
-                        oP.setIdPrecio(0);
-                        oP.setIdProducto(producto.getText());
-                        oP.setIdproveedor(proveedorS);
-                        oP.setPrecio(new BigDecimal(precio.getText()));
-                        oP.setFecha(fecha.getText());
-                        oP.InsertarPrecio();
-                    }
-                    Limpiar();
-                    MostrarProductos();
-                    MostrarCategorias();
                 }
-
             }
         });
-        precio.addMouseListener(new MouseAdapter() {
+        importe.addMouseListener(
+                new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent evt) {
+            public void mouseClicked(MouseEvent evt
+            ) {
                 if ((rbElegir1.isSelected() || rbEscribir1.isSelected()) && (rbElegir2.isSelected()
-                        || rbEscribir2.isSelected()) && (rbUnidades.isSelected() || rbKilos.isSelected())) {
-                    precio.setEnabled(true);
+                        || rbEscribir2.isSelected())) {
+                    importe.setEnabled(true);
                 }
             }
-        });
-        fecha.addMouseListener(new MouseAdapter() {
+        }
+        );
+        fecha.addMouseListener(
+                new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent evt) {
+            public void mouseClicked(MouseEvent evt
+            ) {
                 if ((rbElegir1.isSelected() || rbEscribir1.isSelected()) && (rbElegir2.isSelected()
-                        || rbEscribir2.isSelected()) && (rbUnidades.isSelected() || rbKilos.isSelected())) {
+                        || rbEscribir2.isSelected())) {
                     fecha.setEnabled(true);
                 }
             }
-        });
+        }
+        );
     }
 
     void KeyListeners() {
-        cantUni.addKeyListener(new KeyAdapter() {
+        stock.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent evt) {
-                validarSoloNumeros(evt, cantUni.getText(), (short) 7);
+                validarValorDecimal(evt, stock.getText());
             }
         });
-        cantKilo.addKeyListener(new KeyAdapter() {
+        importe.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent evt) {
-                validarValorDecimal(evt, cantKilo.getText());
+                validarValorDecimal(evt, importe.getText());
             }
         });
-        precio.addKeyListener(new KeyAdapter() {
+        tipo.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent evt) {
-                validarValorDecimal(evt, precio.getText());
+                ValidarSoloLetras(evt, tipo.getText(), (short) 10);
             }
         });
     }
@@ -273,7 +267,28 @@ public class mProductos extends mGenerales {
         }
     }
 
+    private void InsertarTransaccionNueva(String producto, String proveedor, BigDecimal importe, BigDecimal stock,
+            String unidad, String tipoTrans, String fechaC) {
+        oT.setIdTransaccion(0);
+        oT.setTipoTrans(tipoTrans);
+        oT.setProducto(producto);
+        oT.setUnidad(unidad);
+        oT.setProveedor(proveedor);
+        oT.setMonto(importe);
+        oT.setFecha(fechaC);
+        oT.setStock(stock);
+        try {
+            oT.InsertarTransaccion();
+            oA.aviso("Stock modificado correctamente");
+        } catch (Exception e) {
+        }
+        Limpiar();
+        MostrarProductos();
+        MostrarCategorias();
+    }
+
     void opciones() {
+
         JMenuItem modificarItem = new JMenuItem("Modificar");
         JMenuItem eliminarItem = new JMenuItem("Eliminar");
         JMenuItem verInfoItem = new JMenuItem("Ver información del producto");
@@ -291,20 +306,24 @@ public class mProductos extends mGenerales {
                     rbEscribir1.setEnabled(false);
                     rbEscribir2.setEnabled(false);
                     rbElegir1.setEnabled(false);
-                    precio.setEnabled(false);
+                    importe.setEnabled(false);
                     fecha.setEnabled(false);
 
                     String entrada = oA.entrada("Ingrese cantidad de productos salientes:", "");
                     if (!entrada.isEmpty()) {
                         BigDecimal cantidad = new BigDecimal(entrada);
                         oProductos.setCantidad(cantidad);
-                        oProductos.setProducto(productos.getValueAt(fila, 1).toString());
+                        oProductos.setProducto(productos.getValueAt(fila, 1).toString());                      
                         oProductos.DisminuirStock();
+                        String uni = productos.getValueAt(fila, 4).toString();
+                        InsertarTransaccionNueva(oProductos.getProducto(), null,
+                                new BigDecimal(0), cantidad, uni, "Venta", null);
+//                        oT.InsertarTransaccion();
                         Limpiar();
                         MostrarProductos();
                     }
-                } catch (NumberFormatException ex) {
-                    oA.error("El valor ingresado es inválido", ex.getMessage());
+                } catch (Exception ex) {
+                    oA.errorC(ex.getMessage());
                 }
             } else {
                 oA.error("Seleccione una fila primero.", "");
@@ -333,45 +352,158 @@ public class mProductos extends mGenerales {
             int fila = productos.getSelectedRow();
             if (fila != -1) {
                 String nproducto = productos.getValueAt(fila, 1).toString();
-                oP.setIdProducto(nproducto);
-                new mPrecio(oP).CargarFrame();
+                oT.setProducto(nproducto);
+                new mTransaccion(oT).CargarFrame();
             } else {
                 oA.error("Seleccione una fila primero.", "");
-                //FALTA AÑADIR STOCKS AGREGADO POR PRECIOS
             }
         });
     }
-    
-    public boolean Validar() {
 
-        if (!(precio.isEnabled()) || !(fecha.isEnabled())
-                || (cbProv.getSelectedIndex() == -1) || precio.getText().isEmpty() || fecha.getText().isEmpty()) {
-            oA.error("Faltan datos.", "");
+    boolean E(JTextField tf) {
+        return tf.getText().isEmpty();
+    }
+
+    boolean Validar() {
+        boolean rbECS = rbElegir1.isSelected(); //Seleccionar categoria
+        boolean rbEPS = rbElegir2.isSelected(); //Seleccionar producto
+        boolean rbeCS = rbEscribir1.isSelected(); //Ingresar categoria
+        boolean rbePS = rbEscribir2.isSelected(); //Ingresar producto
+        boolean cS = cbCtg.getSelectedIndex() != -1;
+        boolean pS = cbProd.getSelectedIndex() != -1;
+        boolean ppS = cbProv.getSelectedIndex() != -1;
+        boolean txtVacios = E(stock) && E(tipo) && E(importe) && E(fecha) && (cbProv.getSelectedIndex() == -1);
+        boolean txtNoVacios = E(stock) || E(tipo) || E(importe) || E(fecha) || (cbProv.getSelectedIndex() == -1);
+        boolean txtLlenos = !E(stock) && !E(tipo) && !E(importe) && !E(fecha) && (cbProv.getSelectedIndex() != -1);
+        boolean comb = (rbECS && rbEPS) || (rbECS && rbePS) || (rbeCS && rbePS);
+
+        if (comb && txtVacios) {
+            return true; //Para crear un nuevo producto
+        } else if ((comb && txtNoVacios) || (comb && txtLlenos)) {
+            if (rbECS && rbEPS) { //Agregar stock de producto existente
+                if (!cS) {
+                    oA.error("Seleccione una categoría", "");
+                } else if (!pS) {
+                    oA.error("Seleccione un producto", "");
+                } else if (E(stock)) {
+                    oA.error("Ingrese stock de producto", "");
+                } else if (E(tipo)) {
+                    oA.error("Ingrese unidad de medida.", "");
+                } else if (E(importe)) {
+                    oA.error("Ingrese el monto.", "");
+                } else if (E(fecha)) {
+                    oA.error("Especifique fecha de caducidad.", "");
+                } else if (!ppS) {
+                    oA.error("Seleccione un proveedor", "");
+                } else {
+                    return true;
+                }
+            } else if (rbECS && rbePS) { //Agregar stock de nuevo producto de categoria existente
+                if (!cS) {
+                    oA.error("Seleccione una categoría", "");
+                } else if (E(producto)) {
+                    oA.error("Ingrese un producto", "");
+                } else if (E(stock)) {
+                    oA.error("Ingrese stock de producto", "");
+                } else if (E(tipo)) {
+                    oA.error("Ingrese unidad de medida.", "");
+                } else if (E(importe)) {
+                    oA.error("Ingrese el monto.", "");
+                } else if (E(fecha)) {
+                    oA.error("Especifique fecha de caducidad.", "");
+                } else if (!ppS) {
+                    oA.error("Seleccione un proveedor", "");
+                } else {
+                    return true;
+                }
+            } else { //Agregar stock de nuevo producto de nueva categoria
+                if (E(categoria)) {
+                    oA.error("Ingrese una categoría", "");
+                } else if (E(producto)) {
+                    oA.error("Ingrese un producto", "");
+                } else if (E(stock)) {
+                    oA.error("Ingrese stock de producto", "");
+                } else if (E(tipo)) {
+                    oA.error("Ingrese unidad de medida.", "");
+                } else if (E(importe)) {
+                    oA.error("Ingrese el monto.", "");
+                } else if (E(fecha)) {
+                    oA.error("Especifique fecha de caducidad.", "");
+                } else if (!ppS) {
+                    oA.error("Seleccione un proveedor", "");
+                } else {
+                    return true;
+                }
+            }
+        } else if (!comb && txtLlenos) {
+            oA.error("Faltan datos", "");
+        } else {
+            oA.error("Faltan datos", "");
+        }
+        return false;
+    }
+
+    boolean OnlyProduc() {
+
+        procede = false;
+        boolean ctgS = cbCtg.getSelectedIndex() != -1; //Categorias
+        boolean pdtS = cbProd.getSelectedIndex() != -1; //Productos
+        boolean rbECS = rbElegir1.isSelected(); //Seleccionar categoria
+        boolean rbEPS = rbElegir2.isSelected(); //Seleccionar producto
+        boolean rbeCS = rbEscribir1.isSelected(); //Ingresar categoria
+        boolean rbePS = rbEscribir2.isSelected(); //Ingresar producto
+        boolean txtVacios = E(stock) && E(tipo) && E(importe) && E(fecha) && (cbProv.getSelectedIndex() == -1);
+
+        if (rbECS && rbEPS && txtVacios) {
+            if (!ctgS) {
+                oA.error("Seleccione una categoría", "");
+            } else if (!pdtS) {
+                oA.error("Seleccione un producto", "");
+            } else {
+                oA.error("El producto ya existe.", "");
+            }
+        } else if (rbECS && rbePS && txtVacios) { //Nuevo producto de categoria existente
+            if (!ctgS) {
+                oA.error("Seleccione una categoría", "");
+            } else if (producto.getText().isEmpty()) {
+                oA.error("Ingrese un producto", "");
+            } else {
+                procede = true;
+                return true;
+            }
+        } else if (rbeCS && rbePS && txtVacios) { //Nuevo producto de nueva categoria
+            if (E(categoria)) {
+                oA.error("Ingrese una categoría", "");
+            } else if (E(producto)) {
+                oA.error("Ingrese un producto", "");
+            } else {
+                procede = true;
+                return true;
+            }
+        } else {
+            procede = true;
             return false;
         }
-        return true;
-
+        return false;
     }
 
     void Limpiar() {
         bg1.clearSelection();
         bg2.clearSelection();
         bg3.clearSelection();
-//        rbElegir2.setEnabled(false);
-//        rbUnidades.setEnabled(false);
-//        rbKilos.setEnabled(false);
-//        producto.setEnabled(false);
-//        precio.setEnabled(false);
-//        cantKilo.setEnabled(false);
-//        fecha.setEnabled(false);
-//        cbProd.setEnabled(false);
-//        cbCtg.setEnabled(false);
+        rbElegir1.setEnabled(true);
+        rbEscribir1.setEnabled(true);
+        rbEscribir2.setEnabled(true);
+        rbElegir2.setEnabled(false);
+        producto.setEnabled(false);
+        cbProd.setEnabled(false);
+        cbCtg.setEnabled(false);
         categoria.setText(null);
         producto.setText(null);
-        cantUni.setText(null);
-        cantKilo.setText(null);
-        precio.setText(null);
+        stock.setText(null);
+        importe.setText(null);
         fecha.setText(null);
+        tipo.setText(null);
         cbCtg.setSelectedIndex(-1);
         cbProd.setSelectedIndex(-1);
         cbProv.setSelectedIndex(-1);
@@ -383,6 +515,7 @@ public class mProductos extends mGenerales {
         MostrarProductos();
         fAP.setLocationRelativeTo(null);
         fAP.setTitle("Productos");
+        fAP.setResizable(false);
         MostrarProveedores();
         MostrarCategorias();
         opciones();
@@ -396,7 +529,10 @@ public class mProductos extends mGenerales {
         fAP.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                oA.confCerrar(fAP, "administrador");
+                if (oA.confirmación("¿Salir?") == 0) {
+                    fAP.dispose();
+                    new mAdministrador().CargarFrame();
+                }
             }
         });
     }

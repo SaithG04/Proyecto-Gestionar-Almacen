@@ -1,7 +1,6 @@
 package Clases;
 
 import Metodos.mGenerales;
-import Metodos.mSalir;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,20 +10,20 @@ import javax.swing.*;
  *
  * @author isai_
  */
-public class cAlertas extends mGenerales {
+public class cAlertas{
 
     private final String b[] = {"Aceptar"};
     private final String b2[] = {"Aceptar", "Cancelar"};
     private static final String ERRORCONECTION
-            = "com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure\n"
+            = "Communications link failure\n"
             + "\nThe last packet sent successfully to the server was 0 milliseconds ago. "
             + "The driver has not received any packets from the server."; //Mensaje por defecto de error de conexion
 
     public void error(String mensaje, String error) {
         Toolkit.getDefaultToolkit().beep();
         JOptionPane.showOptionDialog(null, mensaje, " Error", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b, b[0]);
-        System.err.println(error);
+                JOptionPane.PLAIN_MESSAGE, mGenerales.icono("/Resources/den.png", 30, 30), b, b[0]);
+        if(!error.isEmpty()) System.err.println(error);
     }
 
     public void errorC(String error) {
@@ -40,23 +39,25 @@ public class cAlertas extends mGenerales {
 
     public void aviso(String mensaje) {
         JOptionPane.showOptionDialog(null, mensaje, " Aviso", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE, icono("/Resources/profesionales.png", 30, 30), b, b[0]);
+                JOptionPane.PLAIN_MESSAGE, mGenerales.icono("/Resources/profesionales.png", 30, 30), b, b[0]);
+    }
+    
+    public void info(String mensaje) {
+//        JOptionPane.showOptionDialog(null, mensaje, " Información", JOptionPane.DEFAULT_OPTION,
+//                JOptionPane.PLAIN_MESSAGE, icono("/Resources/96094.jpg", 30, 30), b, b[0]);
+        JOptionPane.showMessageDialog(null, mensaje, " Información", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void faltanDatos() {
         Toolkit.getDefaultToolkit().beep();
         JOptionPane.showOptionDialog(null, "Faltan datos.", " Advertencia", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b, b[0]);
-    }
-
-    public void confCerrar(JFrame frm, String frame) {
-        new mSalir(frm, frame).CargarFrame();
+                JOptionPane.PLAIN_MESSAGE, mGenerales.icono("/Resources/den.png", 30, 30), b, b[0]);
     }
 
     public int confirmación(String txt) {
         Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showOptionDialog(null, txt, " Confirmar", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE, icono("/Resources/den.png", 30, 30), b2, b2[1]);
+                JOptionPane.PLAIN_MESSAGE, mGenerales.icono("/Resources/den.png", 30, 30), b2, b2[1]);
     }
 
     public String entrada(String mensaje, String titulo) {
@@ -67,7 +68,7 @@ public class cAlertas extends mGenerales {
         textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent evt) {
-                validarValorDecimal(evt, textField.getText());
+                mGenerales.validarValorDecimal(evt, textField.getText());
             }
         });
 
@@ -84,12 +85,5 @@ public class cAlertas extends mGenerales {
         }
         return texto;
     }
-
-    @Override
-    public void CargarFrame() {
-    }
-
-    @Override
-    public void Close() {
-    }
+    
 }
