@@ -187,8 +187,9 @@ public class mProveedores extends mGenerales {
                 int fila = proveedores.getSelectedRow();
                 if (evt.getClickCount() == 2 && fila != -1) {
                     Object valueAt = proveedores.getValueAt(fila, proveedores.getSelectedColumn());
-                    if(valueAt != null)
-                    oA.info(valueAt.toString());
+                    if (valueAt != null) {
+                        oA.info(valueAt.toString());
+                    }
                 }
             }
         });
@@ -327,8 +328,7 @@ public class mProveedores extends mGenerales {
                 Limpiar();
                 oA.aviso("Proveedor agregado correctamente");
             } catch (ClassNotFoundException | SQLException ex) {
-                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                    if(manejarErrorConexion) System.exit(0);
+                oA.manejarErrorConexion(clase, ex);
             }
         }
     }
@@ -346,17 +346,18 @@ public class mProveedores extends mGenerales {
                     oProveedores.setTelefono(telefono.getText());
                     oProveedores.setEmail(email.getText());
                     Object toString = proveedores.getValueAt(fila, 7);
-                    if(toString == null)oProveedores.setWeb("");else{
-                        
-                    }                    
+                    if (toString == null) {
+                        oProveedores.setWeb("");
+                    } else {
+
+                    }
                     oProveedores.setDepartamento(departamentos.getSelectedItem().toString());
                     DefaultTableModel ModificarProveedor = oProveedores.ModificarProveedor(proveedores.getModel());
                     proveedores.setModel(ModificarProveedor);
                     Limpiar();
                     oA.aviso("Proveedor modificado correctamente.");
                 } catch (SQLException | ClassNotFoundException ex) {
-                    boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                    if(manejarErrorConexion) System.exit(0);
+                    oA.manejarErrorConexion(clase, ex);
                 }
             }
         }
@@ -373,8 +374,7 @@ public class mProveedores extends mGenerales {
                     Limpiar();
                     oA.aviso("Proveedor eliminado correctamente.");
                 } catch (ClassNotFoundException | SQLException ex) {
-                    boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                    if(manejarErrorConexion) System.exit(0);
+                    oA.manejarErrorConexion(clase, ex);
                 }
             }
         }
@@ -412,8 +412,7 @@ public class mProveedores extends mGenerales {
             fap.setTitle(" Lista de Clientes ");
             fap.setLocationRelativeTo(null);
         } catch (ClassNotFoundException | SQLException ex) {
-            boolean manejarErrorConexion = oA.manejarErrorConexion(mProveedores.class, ex);
-            if(manejarErrorConexion) System.exit(0);
+            oA.manejarErrorConexion(clase, ex);
         }
     }
 

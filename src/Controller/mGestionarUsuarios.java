@@ -119,10 +119,7 @@ public class mGestionarUsuarios extends mGenerales {
                                 oA.aviso("Usuario eliminado.");
                                 oGU.MostrarUsuarios(usuarios.getModel());
                             } catch (ClassNotFoundException | SQLException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         }
                     } else {
@@ -157,10 +154,7 @@ public class mGestionarUsuarios extends mGenerales {
         try {
             oGU.MostrarUsuarios(usuarios.getModel());
         } catch (SQLException | ClassNotFoundException ex) {
-            boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-            if (manejarErrorConexion) {
-                System.exit(0);
-            }
+            oA.manejarErrorConexion(clase, ex);
         }
         Opciones();
         dobleClick();

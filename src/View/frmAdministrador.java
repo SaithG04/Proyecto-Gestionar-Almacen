@@ -23,7 +23,7 @@ public class frmAdministrador extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        btn = new javax.swing.JButton();
+        btnTransacciones = new javax.swing.JButton();
         btnNuevoUsuario = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -48,8 +48,8 @@ public class frmAdministrador extends javax.swing.JFrame {
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.add(btn, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 280, 170, 140));
+        btnTransacciones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel2.add(btnTransacciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 280, 170, 140));
 
         btnNuevoUsuario.setBackground(new java.awt.Color(51, 153, 255));
         btnNuevoUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resources/grupo.png"))); // NOI18N
@@ -203,13 +203,17 @@ public class frmAdministrador extends javax.swing.JFrame {
         return lblTitle;
     }
 
+    public JButton getBtnTransacciones() {
+        return btnTransacciones;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnGestionarUsuarios;
     private javax.swing.JButton btnNuevoUsuario;
     private javax.swing.JButton btnProductos;
     private javax.swing.JButton btnProveedores;
+    private javax.swing.JButton btnTransacciones;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

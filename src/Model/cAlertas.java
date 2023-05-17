@@ -30,14 +30,13 @@ public class cAlertas {
         }
     }
 
-    public boolean manejarErrorConexion(Class<?> clase, Exception ex) {
+    public void manejarErrorConexion(Class<?> clase, Exception ex) {
         String error = ex.getMessage();
         if (error.equals(ERRORCONECTION)) {
             mostrarError(clase, "Usted no se encuentra conectado a la base de datos.", ex);
-            return true;
+            System.exit(0);
         } else {
             mostrarError(clase, "Error desconocido.", ex);
-            return false;
         }
     }
 

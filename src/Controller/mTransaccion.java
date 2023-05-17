@@ -5,8 +5,6 @@ import View.frmTransacciones;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,9 +25,20 @@ public class mTransaccion extends mGenerales {
         this.oP = oP;
     }
 
-    void MostrarTransacciones() throws ClassNotFoundException, SQLException {       
-        DefaultTableModel MostrarProveedores = oP.MostrarProveedores(transacciones.getModel());
-        transacciones.setModel(MostrarProveedores);
+    public mTransaccion() {
+        fP = new frmTransacciones();
+        transacciones = fP.getJtbTransacciones();
+        oP = new cTransaccion();
+    }
+
+    void MostrarTransacciones() throws ClassNotFoundException, SQLException {
+        DefaultTableModel MostrarTransacciones = oP.MostrarTransacciones(transacciones.getModel());
+        transacciones.setModel(MostrarTransacciones);
+    }
+
+    void MostrarHistorialTransacciones() throws ClassNotFoundException, SQLException {
+        DefaultTableModel MostrarTransacciones = oP.MonstrarHistorialTransacciones(transacciones.getModel());
+        transacciones.setModel(MostrarTransacciones);
     }
 
     @Override
@@ -48,7 +57,22 @@ public class mTransaccion extends mGenerales {
                 transacciones.setEnabled(false);
             }
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(mTransaccion.class.getName()).log(Level.SEVERE, null, ex);
+            oA.manejarErrorConexion(clase, ex);
+//            if(manejarErrorConexion) System.exit(0);
+        }
+    }
+
+    public void CargarTransacciones() {
+        try {
+            MostrarHistorialTransacciones();
+            Close2();
+            fP.setVisible(true);
+            fP.setLocationRelativeTo(null);
+            fP.setAlwaysOnTop(true);
+            fP.setResizable(false);
+            transacciones.setEnabled(false);
+        } catch (ClassNotFoundException | SQLException ex) {
+            oA.manejarErrorConexion(clase, ex);
         }
     }
 
@@ -58,6 +82,16 @@ public class mTransaccion extends mGenerales {
             @Override
             public void windowClosing(WindowEvent evt) {
                 fP.dispose();
+            }
+        });
+    }
+
+    public void Close2() {
+        fP.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                fP.dispose();
+                new mAdministrador().CargarFrame();
             }
         });
     }

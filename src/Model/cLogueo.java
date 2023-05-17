@@ -63,8 +63,7 @@ public class cLogueo extends cSQL {
                 return "userNoExist";
             }          
         } catch (ClassNotFoundException | SQLException ex) {
-            boolean manejarErrorConexion = oA.manejarErrorConexion(cLogueo.class, ex);
-            if(manejarErrorConexion) System.exit(0);
+            oA.manejarErrorConexion(cLogueo.class, ex);
         }
         return null;
     }

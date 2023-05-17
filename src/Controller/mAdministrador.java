@@ -1,8 +1,6 @@
 package Controller;
 
 import View.frmAdministrador;
-import Model.cAdministrador;
-import Model.cAlertas;
 import java.awt.event.*;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,11 +11,9 @@ import javax.swing.JLabel;
  */
 public class mAdministrador extends mGenerales {
 
-    private final cAlertas oA = new cAlertas();
-    private final cAdministrador oAd = new cAdministrador();
     private final frmAdministrador a;
     private final JLabel lblTitle;
-    private final JButton btnCerrarSesion, btnGestionarUsuarios, btnNuevoUsuario, btnProductos, btnProveedores;
+    private final JButton btnCerrarSesion, btnGestionarUsuarios, btnNuevoUsuario, btnProductos, btnProveedores, btnTransacciones;
     boolean value = false;
 
     public mAdministrador() {
@@ -28,25 +24,16 @@ public class mAdministrador extends mGenerales {
         btnNuevoUsuario = a.getBtnNuevoUsuario();
         btnProductos = a.getBtnProductos();
         btnProveedores = a.getBtnProveedores();
+        btnTransacciones = a.getBtnTransacciones();
     }
-
-//    public boolean ComprobarConexion() {
-//        try {
-//                Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-//        } catch (ClassNotFoundException | SQLException e) {
-//            oA.errorC(e.toString());
-//            return false;
-//        }
-//        return true;
-//    }
 
     @Override
     public final void Close() {
         a.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if(!value){
-                    if(oA.confirmación("¿Salir de la aplicación?") == 0){
+                if (!value) {
+                    if (oA.confirmación("¿Salir de la aplicación?") == 0) {
                         System.exit(0);
                     }
                 }
@@ -54,11 +41,11 @@ public class mAdministrador extends mGenerales {
         });
     }
 
-    public final void Clicks() {
+    public final void MouseListeners() {
         btnCerrarSesion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if(oA.confirmación("¿Cerrar sesión?") == 0){
+                if (oA.confirmación("¿Cerrar sesión?") == 0) {
                     value = true;
                     a.dispose();
                     new mLogueo().CargarFrame();
@@ -69,50 +56,36 @@ public class mAdministrador extends mGenerales {
         btnGestionarUsuarios.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (oAd.ComprobarConexion()) {
-                    a.dispose();
-                    new mGestionarUsuarios().CargarFrame();                  
-                } else {
-                    a.dispose();
-                    new mLogueo().CargarFrame();
-                    
-                }
+                a.dispose();
+                new mGestionarUsuarios().CargarFrame();
             }
         });
         btnProveedores.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (oAd.ComprobarConexion()) {
-                    a.dispose();
-                    new mProveedores().CargarFrame();
-                } else {
-                    new mLogueo().CargarFrame();
-                    a.dispose();
-                }
+                a.dispose();
+                new mProveedores().CargarFrame();
             }
         });
         btnProductos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (oAd.ComprobarConexion()) {
-                    a.dispose();
-                    new mProductos().CargarFrame();
-                } else {
-                    a.dispose();
-                    new mLogueo().CargarFrame();
-                }
+                a.dispose();
+                new mProductos().CargarFrame();
             }
         });
         btnNuevoUsuario.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (oAd.ComprobarConexion()) {                    
-                    a.dispose();
-                    new mRegistroUsuarios().CargarFrame();
-                } else {                
-                    a.dispose();
-                    new mLogueo().CargarFrame();
-                }
+                a.dispose();
+                new mRegistroUsuarios().CargarFrame();
+            }
+        });
+        btnTransacciones.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                a.dispose();
+                new mTransaccion().CargarTransacciones();
             }
         });
     }
@@ -121,8 +94,8 @@ public class mAdministrador extends mGenerales {
     public void CargarFrame() {
         a.setVisible(true);
         a.setLocationRelativeTo(null);
-        Clicks();
+        MouseListeners();
         Close();
-        lblTitle.setText("Has iniciado sesión como: "+mLogueo.oL.getUsuario().toUpperCase());
+        lblTitle.setText("Has iniciado sesión como: " + mLogueo.oL.getUsuario().toUpperCase());
     }
 }

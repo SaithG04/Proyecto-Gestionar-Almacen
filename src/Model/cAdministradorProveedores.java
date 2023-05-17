@@ -186,12 +186,7 @@ public class cAdministradorProveedores extends cSQL {
         psInsertar.setString(8, departamento);
         psInsertar.executeUpdate();
         DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
-        if (!con.isClosed()) {
-            con.close();
-        }
-        if (!psInsertar.isClosed()) {
-            psInsertar.close();
-        }
+        Finalize();
         return MostrarProveedores;
 
     }

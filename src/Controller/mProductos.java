@@ -99,10 +99,7 @@ public class mProductos extends mGenerales {
                             oProductos.setCategoria(cbCtg.getSelectedItem().toString());
                             MostrarProductosCB();
                         } catch (ClassNotFoundException | SQLException ex) {
-                            boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                            if (manejarErrorConexion) {
-                                System.exit(0);
-                            }
+                            oA.manejarErrorConexion(clase, ex);
                         }
                     }
                 }
@@ -119,8 +116,7 @@ public class mProductos extends mGenerales {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (Validar()) {
-                    boolean OnlyProduc = !OnlyProduc();
-                    if (OnlyProduc && procede) {
+                    if (!OnlyProduc() && procede) { //No es solo para crear producto
                         String proveedor = cbProv.getSelectedItem().toString();
                         BigDecimal cantidad = new BigDecimal(stock.getText());
                         BigDecimal Import = new BigDecimal(importe.getText());
@@ -134,14 +130,12 @@ public class mProductos extends mGenerales {
                                 oProductos.setProducto(prod);
                                 oProductos.setCantidad(cantidad);
                                 oProductos.AgregarStock();
+                                java.sql.Timestamp fechaT = new java.sql.Timestamp(System.currentTimeMillis());
                                 InsertarTransaccionNueva(prod, proveedor, Import, cantidad,
-                                        tipo.getText(), "Compra", fecha.getText());
+                                        tipo.getText(), "Compra", fecha.getText(), fechaT);
                                 oA.aviso("Su transaccion ha procedido correctamente.");
                             } catch (SQLException | ClassNotFoundException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         } else if (rbEscribir2.isSelected() && rbElegir1.isSelected()) {
                             try {
@@ -152,14 +146,12 @@ public class mProductos extends mGenerales {
                                 oProductos.setCategoria(categoria);
                                 oProductos.setCantidad(cantidad);
                                 oProductos.InsertarNuevo();
+                                java.sql.Timestamp fechaT = new java.sql.Timestamp(System.currentTimeMillis());
                                 InsertarTransaccionNueva(productoNuevo, proveedor, Import, cantidad,
-                                        tipo.getText(), "Compra", fecha.getText());
+                                        tipo.getText(), "Compra", fecha.getText(), fechaT);
                                 oA.aviso("Su transaccion ha procedido correctamente.");
                             } catch (SQLException | ClassNotFoundException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         } else if (rbEscribir2.isSelected() && rbEscribir1.isSelected()) {
                             try {
@@ -170,17 +162,17 @@ public class mProductos extends mGenerales {
                                 oProductos.setCategoria(categoriaNueva);
                                 oProductos.setCantidad(cantidad);
                                 oProductos.InsertarNuevo();
+                                java.sql.Timestamp fechaT = new java.sql.Timestamp(System.currentTimeMillis());
                                 InsertarTransaccionNueva(productoNuevo, proveedor, Import, cantidad,
-                                        tipo.getText(), "Compra", fecha.getText());
+                                        tipo.getText(), "Compra", fecha.getText(), fechaT);
                                 oA.aviso("Su transaccion ha procedido correctamente.");
                             } catch (SQLException | ClassNotFoundException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         }
-                    } else if (!OnlyProduc && procede) {
+                    } else if (OnlyProduc() && procede) { //Es solo para crear producto
+                        oProductos.setCantidad(null);
+                        oProductos.setUnidad(null);
                         if (rbEscribir2.isSelected() && rbElegir1.isSelected()) {
                             try {
                                 // Nuevo producto de categoría existente
@@ -188,17 +180,13 @@ public class mProductos extends mGenerales {
                                 String productoNuevo = producto.getText();
                                 oProductos.setProducto(productoNuevo);
                                 oProductos.setCategoria(categoria);
-                                oProductos.setCantidad(new BigDecimal(0));
                                 oProductos.InsertarNuevo();
                                 oA.aviso("Registro exitoso");
                                 Limpiar();
                                 MostrarProductos();
                                 MostrarCategorias();
                             } catch (SQLException | ClassNotFoundException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         } else if (rbEscribir2.isSelected() && rbEscribir1.isSelected()) {
                             try {
@@ -207,17 +195,13 @@ public class mProductos extends mGenerales {
                                 String productoNuevo = producto.getText();
                                 oProductos.setProducto(productoNuevo);
                                 oProductos.setCategoria(categoriaNueva);
-                                oProductos.setCantidad(new BigDecimal(0));
                                 oProductos.InsertarNuevo();
                                 oA.aviso("Registro exitoso");
                                 Limpiar();
                                 MostrarProductos();
                                 MostrarCategorias();
                             } catch (SQLException | ClassNotFoundException ex) {
-                                boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                                if (manejarErrorConexion) {
-                                    System.exit(0);
-                                }
+                                oA.manejarErrorConexion(clase, ex);
                             }
                         }
                     }
@@ -306,16 +290,18 @@ public class mProductos extends mGenerales {
         }
     }
 
-    private void InsertarTransaccionNueva(String producto, String proveedor, BigDecimal importe, BigDecimal stock,
-            String unidad, String tipoTrans, String fechaC) throws SQLException, ClassNotFoundException {
+    private void InsertarTransaccionNueva(String producto, String proveedor, BigDecimal importe, BigDecimal cantidad,
+            String unidad, String tipoTrans, String fechaC, java.sql.Timestamp fechaTrans) throws SQLException, ClassNotFoundException {
         oT.setIdTransaccion(0);
         oT.setTipoTrans(tipoTrans);
-        oT.setProducto(producto);
-        oT.setUnidad(unidad);
-        oT.setProveedor(proveedor);
+        oT.setIdProducto(producto);
         oT.setMonto(importe);
-        oT.setFecha(fechaC);
-        oT.setStock(stock);
+        oT.setCantidad(cantidad);
+        oT.setUnidad(unidad);
+        oT.setIdProveedor(proveedor);
+        oT.setFechaCad(fechaC);
+        oT.setFechaTrans(fechaTrans);
+        oT.setIdUsuario(mLogueo.oL.getUsuario());
         oT.InsertarTransaccion();
         Limpiar();
         MostrarProductos();
@@ -337,32 +323,38 @@ public class mProductos extends mGenerales {
         modificarItem.addActionListener((ActionEvent e) -> {
             int fila = productos.getSelectedRow();
             if (fila != -1) {
-                try {
-                    rbEscribir1.setEnabled(false);
-                    rbEscribir2.setEnabled(false);
-                    rbElegir1.setEnabled(false);
-                    importe.setEnabled(false);
-                    fecha.setEnabled(false);
+                if (productos.getValueAt(fila, 3) != null) {
+                    try {
+                        rbEscribir1.setEnabled(false);
+                        rbEscribir2.setEnabled(false);
+                        rbElegir1.setEnabled(false);
+                        importe.setEnabled(false);
+                        fecha.setEnabled(false);
 
-                    String entrada = oA.entrada("Ingrese cantidad de productos salientes:", "");
-                    if (!entrada.isEmpty()) {
-                        BigDecimal cantidad = new BigDecimal(entrada);
-                        oProductos.setCantidad(cantidad);
-                        oProductos.setProducto(productos.getValueAt(fila, 1).toString());
-                        oProductos.DisminuirStock();
-                        String uni = productos.getValueAt(fila, 4).toString();
-                        InsertarTransaccionNueva(oProductos.getProducto(), null,
-                                new BigDecimal(0), cantidad, uni, "Venta", null);
-                        oA.aviso("Stock modificado correctamente");
-                        Limpiar();
-                        MostrarProductos();
+                        String entrada = oA.entrada("Ingrese cantidad de productos salientes:", "");
+                        if (!entrada.isEmpty()) {
+                            BigDecimal cantidad = new BigDecimal(entrada);
+                            oProductos.setCantidad(cantidad);
+                            oProductos.setProducto(productos.getValueAt(fila, 1).toString());
+
+                            boolean DisminuirStock = oProductos.DisminuirStock();
+                            if (DisminuirStock) {
+                                String uni = productos.getValueAt(fila, 4).toString();
+                                java.sql.Timestamp fechaT = new java.sql.Timestamp(System.currentTimeMillis());
+                                InsertarTransaccionNueva(oProductos.getProducto(), null,
+                                        new BigDecimal(0), cantidad, uni, "Venta", null, fechaT);
+                                oA.aviso("Stock modificado correctamente");
+                                Limpiar();
+                                MostrarProductos();
+                            }
+                        }
+                    } catch (ClassNotFoundException | SQLException ex) {
+                        oA.manejarErrorConexion(clase, ex);
                     }
-                } catch (ClassNotFoundException | SQLException ex) {
-                    boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                    if (manejarErrorConexion) {
-                        System.exit(0);
-                    }
+                } else {
+                    oA.mostrarError(clase, "Agregue stock primero.", null);
                 }
+
             } else {
                 oA.mostrarError(clase, "Seleccione una fila primero.", null);
             }
@@ -382,10 +374,7 @@ public class mProductos extends mGenerales {
                         MostrarProductos();
                         MostrarCategorias();
                     } catch (SQLException | ClassNotFoundException ex) {
-                        boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-                        if (manejarErrorConexion) {
-                            System.exit(0);
-                        }
+                        oA.manejarErrorConexion(clase, ex);
                     }
                 }
             } else {
@@ -396,9 +385,13 @@ public class mProductos extends mGenerales {
         verInfoItem.addActionListener((ActionEvent e) -> {
             int fila = productos.getSelectedRow();
             if (fila != -1) {
-                String nproducto = productos.getValueAt(fila, 1).toString();
-                oT.setProducto(nproducto);
-                new mTransaccion(oT).CargarFrame();
+                try {
+                    String nameProducto = productos.getValueAt(fila, 1).toString();
+                    oT.setIdProducto(nameProducto);
+                    new mTransaccion(oT).CargarFrame();
+                } catch (ClassNotFoundException | SQLException ex) {
+                    oA.manejarErrorConexion(clase, ex);
+                }
             } else {
                 oA.mostrarError(clase, "Seleccione una fila primero.", null);
             }
@@ -569,10 +562,7 @@ public class mProductos extends mGenerales {
             KeyListeners();
             Close();
         } catch (SQLException | ClassNotFoundException ex) {
-            boolean manejarErrorConexion = oA.manejarErrorConexion(clase, ex);
-            if (manejarErrorConexion) {
-                System.exit(0);
-            }
+            oA.manejarErrorConexion(clase, ex);
         }
     }
 

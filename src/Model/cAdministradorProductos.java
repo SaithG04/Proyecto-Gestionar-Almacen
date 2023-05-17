@@ -115,7 +115,7 @@ public class cAdministradorProductos extends cSQL {
             String elemento = rs.getString("Categoria");
             elementosUnicos.add(elemento);
         }
-
+        Finalize();
         return elementosUnicos;
     }
 
@@ -127,6 +127,7 @@ public class cAdministradorProductos extends cSQL {
         while (rs.next()) {
             elementos.add(rs.getString("Nombre"));
         }
+        Finalize();
         return elementos;
     }
 
@@ -141,6 +142,7 @@ public class cAdministradorProductos extends cSQL {
         psInsertar.setBigDecimal(4, cantidad);
         psInsertar.setString(5, unidad);
         psInsertar.executeUpdate();
+        Finalize();
     }
 
     public void AgregarStock() throws ClassNotFoundException, SQLException {
@@ -149,33 +151,42 @@ public class cAdministradorProductos extends cSQL {
         rs = st.executeQuery("SELECT Stock FROM productos WHERE Nombre= '" + producto + "'");
         while (rs.next()) {
             BigDecimal Oldstock = rs.getBigDecimal("Stock");
-            cantidad = Oldstock.add(cantidad);
-            psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
+            if (Oldstock != null) {
+                cantidad = Oldstock.add(cantidad);
+            }
+            System.out.println(cantidad);
+            psInsertar = con.prepareStatement("UPDATE productos SET Stock=?,Unidad=? WHERE Nombre=?");
             psInsertar.setBigDecimal(1, cantidad);
-            psInsertar.setString(2, producto);
+            psInsertar.setString(2, unidad);
+            psInsertar.setString(3, producto);
             psInsertar.executeUpdate();
         }
+        Finalize();
+
     }
 
-    public void DisminuirStock() throws ClassNotFoundException, SQLException {
+    public boolean DisminuirStock() throws ClassNotFoundException, SQLException {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
         rs = st.executeQuery("Select Stock from productos where Nombre= '" + producto + "'");
         while (rs.next()) {
             BigDecimal stock = rs.getBigDecimal("Stock");
-            if (stock.compareTo(cantidad) < 0) {
-                oA.mostrarError(clase, "Stock insuficiente.", null);
-            } else {
-                cantidad = stock.subtract(cantidad);
-                psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
-                psInsertar.setBigDecimal(1, cantidad);
-                psInsertar.setString(2, producto);
-                psInsertar.executeUpdate();
-
+            if (stock != null) {
+                if (stock.compareTo(cantidad) < 0) {
+                    oA.mostrarError(clase, "Stock insuficiente.", null);
+                    return false;
+                } else {
+                    cantidad = stock.subtract(cantidad);
+                    psInsertar = con.prepareStatement("UPDATE productos SET Stock=? WHERE Nombre=?");
+                    psInsertar.setBigDecimal(1, cantidad);
+                    psInsertar.setString(2, producto);
+                    psInsertar.executeUpdate();
+                }
             }
         }
-
+        Finalize();
+        return true;
     }
 
     public void EliminarProducto() throws ClassNotFoundException, SQLException {
@@ -183,6 +194,7 @@ public class cAdministradorProductos extends cSQL {
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
         st.executeUpdate("DELETE FROM productos WHERE IdProducto='" + idProducto + "'");
+        Finalize();
     }
 
     void Finalize() throws SQLException {
