@@ -1,7 +1,7 @@
 package Controller;
 
 import View.frmAdministradorGestionarUsuarios;
-import Model.cGestionarUsuarios;
+import Model.cAdministradorUsuarios;
 import java.awt.event.*;
 import java.sql.SQLException;
 import javax.swing.*;
@@ -12,7 +12,7 @@ import javax.swing.*;
  */
 public class mGestionarUsuarios extends mGenerales {
 
-    private final cGestionarUsuarios oGU = new cGestionarUsuarios();
+    private cAdministradorUsuarios oU;
     private mRegistroUsuarios ru;
     private final frmAdministradorGestionarUsuarios fagu;
     private final JTable usuarios;
@@ -79,9 +79,10 @@ public class mGestionarUsuarios extends mGenerales {
 
         upd.addActionListener((ActionEvent e) -> {
             if (usuarios.getSelectedRow() != -1) {
-
+//                oU = new cAdministradorUsuarios();
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (oGU.Conectado()) {
+
+                    if (oU.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -91,7 +92,7 @@ public class mGestionarUsuarios extends mGenerales {
                         fagu.dispose();
                     }
                 } else {
-                    if (oGU.Conectado()) {
+                    if (oU.Conectado()) {
                         ru = new mRegistroUsuarios();
                         ru.CargarFrame();
                         Modificar();
@@ -111,13 +112,14 @@ public class mGestionarUsuarios extends mGenerales {
         dlt.addActionListener((ActionEvent e) -> {
             if (usuarios.getSelectedRow() != -1) {
                 if (!usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString().equals(mLogueo.oL.getUsuario())) {
-                    if (oGU.Conectado()) {
+//                    oU = new cAdministradorUsuarios();
+                    if (oU.Conectado()) {
                         if (oA.confirmación("¿Eliminar usuario?") == 0) {
                             try {
                                 String user = usuarios.getValueAt(usuarios.getSelectedRow(), 3).toString();
-                                oGU.EliminarUsuario(user);
+                                oU.EliminarUsuario(user);
                                 oA.aviso("Usuario eliminado.");
-                                oGU.MostrarUsuarios(usuarios.getModel());
+                                oU.MostrarUsuarios(usuarios.getModel());
                             } catch (ClassNotFoundException | SQLException ex) {
                                 oA.manejarErrorConexion(clase, ex);
                             }
@@ -152,7 +154,8 @@ public class mGestionarUsuarios extends mGenerales {
         fagu.setLocationRelativeTo(null);
         Close();
         try {
-            oGU.MostrarUsuarios(usuarios.getModel());
+            oU = new cAdministradorUsuarios();
+            oU.MostrarUsuarios(usuarios.getModel());
         } catch (SQLException | ClassNotFoundException ex) {
             oA.manejarErrorConexion(clase, ex);
         }

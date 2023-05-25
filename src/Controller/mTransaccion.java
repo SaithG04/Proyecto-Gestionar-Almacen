@@ -1,6 +1,6 @@
 package Controller;
 
-import Model.cTransaccion;
+import Model.cAdministradorTransaccion;
 import View.frmTransacciones;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,12 +14,12 @@ import javax.swing.table.DefaultTableModel;
  */
 public class mTransaccion extends mGenerales {
 
-    private final cTransaccion oP;
+    private final cAdministradorTransaccion oP;
     private final frmTransacciones fP;
     private final JTable transacciones;
     final Class clase = mTransaccion.class;
 
-    public mTransaccion(cTransaccion oP) {
+    public mTransaccion(cAdministradorTransaccion oP) {
         fP = new frmTransacciones();
         transacciones = fP.getJtbTransacciones();
         this.oP = oP;
@@ -28,7 +28,7 @@ public class mTransaccion extends mGenerales {
     public mTransaccion() {
         fP = new frmTransacciones();
         transacciones = fP.getJtbTransacciones();
-        oP = new cTransaccion();
+        oP = new cAdministradorTransaccion();
     }
 
     void MostrarTransacciones() throws ClassNotFoundException, SQLException {

@@ -1,7 +1,7 @@
 package Controller;
 
 import Model.cAdministradorProductos;
-import Model.cTransaccion;
+import Model.cAdministradorTransaccion;
 import View.frmAdministradorProductos;
 import java.awt.event.*;
 import java.math.BigDecimal;
@@ -28,7 +28,7 @@ public class mProductos extends mGenerales {
     final Class clase = mProductos.class;
 
     cAdministradorProductos oProductos = new cAdministradorProductos();
-    cTransaccion oT = new cTransaccion();
+    cAdministradorTransaccion oT = new cAdministradorTransaccion();
 
     public mProductos() {
         fAP = new frmAdministradorProductos();

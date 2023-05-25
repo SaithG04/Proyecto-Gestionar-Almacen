@@ -13,11 +13,11 @@ public abstract class mGenerales {
 
     public static final Image IMG = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("Resources/logo.jpg"));
 
-    public static final String CREARUSER = "INSERT INTO usuarios(id_usuario,nombres,apellidos,username,contraseña,tipo_usuario,telefono,correo) VALUES (?,?,?,?,?,?,?,?)";
-    public static final String ACTUALIZARUSER = "UPDATE usuarios SET nombres=?,apellidos=?,username=?,contraseña=?,tipo_usuario=?,telefono=?,correo=? WHERE id_usuario=?";
+    public static final String CREARUSER = "INSERT INTO usuarios(nombres,apellidos,username,password,tipo_usuario,telefono,correo,"
+            + "id_admin,fecha_registro) VALUES (?,?,?,?,?,?,?,?,?)";
+    public static final String ACTUALIZARUSER = "UPDATE usuarios SET nombres=?,apellidos=?,username=?,password=?,tipo_usuario=?,"
+            + "telefono=?,correo=?,id_admin=?,fecha_registro=? WHERE id=?";
     public static final Color COLORERROR = new Color(255, 153, 153);
-    public static final String USER = "";
-    public static final String PASSWORD = "";
     public final cAlertas oA = new cAlertas();
     
     public abstract void CargarFrame();

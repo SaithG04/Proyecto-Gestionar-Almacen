@@ -100,7 +100,7 @@ public class cAdministradorProveedores extends cSQL {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
         st = con.createStatement();
-        st.executeUpdate("DELETE FROM proveedores WHERE IdProveedor=" + idProveedor);
+        st.executeUpdate("DELETE FROM proveedores WHERE id=" + idProveedor);
         DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
         Finalize();
         return MostrarProveedores;
@@ -117,15 +117,15 @@ public class cAdministradorProveedores extends cSQL {
         modelo.setRowCount(0);
 
         while (rs.next()) {
-            prov[0] = rs.getInt("IdProveedor");
-            prov[1] = rs.getString("Razon_Social");
-            prov[2] = rs.getString("RUC");
-            prov[3] = rs.getString("Direccion");
-            prov[4] = rs.getString("Contacto");
-            prov[5] = rs.getString("Telefono");
-            prov[6] = rs.getString("Email");
-            prov[7] = rs.getString("Web");
-            prov[8] = rs.getString("Departamento");
+            prov[0] = rs.getInt("id");
+            prov[1] = rs.getString("razon_social");
+            prov[2] = rs.getString("ruc");
+            prov[3] = rs.getString("direccion");
+            prov[4] = rs.getString("contacto");
+            prov[5] = rs.getString("telefono");
+            prov[6] = rs.getString("email");
+            prov[7] = rs.getString("web");
+            prov[8] = rs.getString("departamento");
             modelo.addRow(prov);
         }
         Finalize();
@@ -136,7 +136,7 @@ public class cAdministradorProveedores extends cSQL {
     public DefaultTableModel ModificarProveedor(TableModel model) throws SQLException, ClassNotFoundException {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement("UPDATE proveedores SET Razon_Social=?,RUC=?,Direccion=?,Contacto=?,Telefono=?,Email=?,Web=?,Departamento=? WHERE IdProveedor=?");
+        psInsertar = con.prepareStatement("UPDATE proveedores SET razon_social=?,ruc=?,direccion=?,contacto=?,telefono=?,email=?,web=?,departamento=? WHERE id=?");
         psInsertar.setString(1, razonSocial);
         psInsertar.setString(2, ruc);
         psInsertar.setString(3, direccion);
@@ -167,23 +167,22 @@ public class cAdministradorProveedores extends cSQL {
     public DefaultTableModel InsertarProveedor(TableModel modelo) throws ClassNotFoundException, SQLException {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement("INSERT INTO proveedores(IdProveedor,Razon_Social,RUC,Direccion,Contacto,Telefono,Email,Departamento) VALUES (?,?,?,?,?,?,?,?)");
-        psInsertar.setInt(1, idProveedor);
-        psInsertar.setString(2, razonSocial);
-        psInsertar.setString(3, ruc);
-        psInsertar.setString(4, direccion);
-        psInsertar.setString(5, contacto);
+        psInsertar = con.prepareStatement("INSERT INTO proveedores(razon_social,ruc,direccion,contacto,telefono,email,departamento) VALUES (?,?,?,?,?,?,?)");
+        psInsertar.setString(1, razonSocial);
+        psInsertar.setString(2, ruc);
+        psInsertar.setString(3, direccion);
+        psInsertar.setString(4, contacto);
         if (telefono.isEmpty() && email.isEmpty()) {
+            psInsertar.setString(5, null);
             psInsertar.setString(6, null);
-            psInsertar.setString(7, null);
         } else if (!telefono.isEmpty() && email.isEmpty()) {
-            psInsertar.setString(6, telefono);
-            psInsertar.setString(7, null);
+            psInsertar.setString(5, telefono);
+            psInsertar.setString(6, null);
         } else {
-            psInsertar.setString(6, telefono);
-            psInsertar.setString(7, email);
+            psInsertar.setString(5, telefono);
+            psInsertar.setString(6, email);
         }
-        psInsertar.setString(8, departamento);
+        psInsertar.setString(7, departamento);
         psInsertar.executeUpdate();
         DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
         Finalize();

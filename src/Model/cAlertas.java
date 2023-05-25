@@ -4,6 +4,7 @@ import Controller.mGenerales;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -35,6 +36,8 @@ public class cAlertas {
         if (error.equals(ERRORCONECTION)) {
             mostrarError(clase, "Usted no se encuentra conectado a la base de datos.", ex);
             System.exit(0);
+        }else if(ex instanceof SQLException){
+            mostrarError(clase, "Error de la base de datos. Contacte al administrador.", ex);
         } else {
             mostrarError(clase, "Error desconocido.", ex);
         }

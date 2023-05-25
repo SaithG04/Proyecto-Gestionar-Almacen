@@ -9,7 +9,7 @@ import java.sql.*;
 public class cSQL {
 
     private final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final String BD = "jdbc:mysql://localhost/proyectoFinal";
+    private final String BD = "jdbc:mysql://localhost/almacen1_0";
     private Connection conex;
     protected final cAlertas oA = new cAlertas();
 
@@ -26,7 +26,7 @@ public class cSQL {
 
         //Connection solamente para buscar usuario.
         Class.forName(DRIVER); //Llamar al driver.
-        conex = DriverManager.getConnection(BD, "root", ""); //Establecer conexion
+        conex = DriverManager.getConnection(BD, "owner", ""); //Establecer conexion
         return conex;
 
     }

@@ -205,25 +205,25 @@ public class mProveedores extends mGenerales {
         telefono.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                validarSoloNumeros(e, telefono.getText(), (short) 9);
+                validarSoloNumeros(e, telefono.getText(), (short) 20);
             }
         });
         contacto.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                ValidarSoloLetras(e, contacto.getText(), (short) 200);
+                ValidarSoloLetras(e, contacto.getText(), (short) 255);
             }
         });
         razonSocial.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                validarLength(e, razonSocial.getText(), (short) 30);
+                validarLength(e, razonSocial.getText(), (short) 255);
             }
         });
         direccion.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                validarLength(e, direccion.getText(), (short) 50);
+                validarLength(e, direccion.getText(), (short) 255);
             }
         });
         ruc.addKeyListener(new KeyAdapter() {

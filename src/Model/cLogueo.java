@@ -40,10 +40,11 @@ public class cLogueo extends cSQL {
     public String iniciarSesion(String user, String contrasena) {
         try {
             Connection con = Conectar();
-            st = con.prepareStatement("Select username from usuarios where username COLLATE utf8_bin = '" + user + "'"); //utf8_bin para dif MAY de MIN
+            st = con.prepareStatement("Select username from usuarios where username COLLATE utf8_bin = '" + user + "'");
+            //utf8_bin para dif MAY de MIN, en caso de no usar utf8_bin:  ALTER TABLE usuarios CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;
             rs = st.executeQuery();
             if (rs.next()) { //Validar usuario
-                st = con.prepareStatement("Select contraseña from usuarios where username COLLATE utf8_bin = '" + user + "' and contraseña COLLATE utf8_bin = '" + contrasena + "'");
+                st = con.prepareStatement("Select password from usuarios where username COLLATE utf8_bin = '" + user + "' and password COLLATE utf8_bin = '" + contrasena + "'");
                 rs = st.executeQuery();
                 if (rs.next()) { //Validar contraseña
                     st = con.prepareStatement("Select tipo_usuario from usuarios where username COLLATE utf8_bin = '" + user + "'");

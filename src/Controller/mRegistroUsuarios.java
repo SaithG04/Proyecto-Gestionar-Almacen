@@ -1,8 +1,7 @@
 package Controller;
 
 import View.frmRegistroUsuarios;
-import Model.cUsuarios;
-import Model.cRegistroUsuarios;
+import Model.cAdministradorUsuarios;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -15,8 +14,7 @@ import javax.swing.*;
  */
 public class mRegistroUsuarios extends mGenerales {
 
-    private cUsuarios oU;
-    final cRegistroUsuarios oRU = new cRegistroUsuarios();
+    private cAdministradorUsuarios oU;
 
     final JTextField id, nombres, apellidos, telefono, correo, usuario;
     final JPasswordField contraseña;
@@ -46,10 +44,12 @@ public class mRegistroUsuarios extends mGenerales {
             if (aceptar.getText().equalsIgnoreCase("registrar")) {
                 if (admin.isSelected()) {
                     try {
-                        oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
-                                String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                        oRU.RegistrarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
-                        oRU.Registrar(oU, CREARUSER);
+                        java.sql.Timestamp fechaR = new java.sql.Timestamp(System.currentTimeMillis());
+                        oU = new cAdministradorUsuarios(nombres.getText(), apellidos.getText(), usuario.getText(),
+                                String.valueOf(contraseña.getPassword()), "administrador",
+                                telefono.getText(), correo.getText(), mLogueo.oL.getUsuario(), fechaR);
+                        oU.RegistrarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                        oU.Registrar(CREARUSER);
                         Limpiar();
                         oA.aviso("Registro exitoso");
                     } catch (ClassNotFoundException | SQLException ex) {
@@ -57,10 +57,12 @@ public class mRegistroUsuarios extends mGenerales {
                     }
                 } else {
                     try {
-                        oU = new cUsuarios(0, nombres.getText(), apellidos.getText(), usuario.getText(),
-                                String.valueOf(contraseña.getPassword()), "usuario", telefono.getText(), correo.getText());
-                        oRU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
-                        oRU.Registrar(oU, CREARUSER);
+                        java.sql.Timestamp fechaR = new java.sql.Timestamp(System.currentTimeMillis());
+                        oU = new cAdministradorUsuarios(nombres.getText(), apellidos.getText(), usuario.getText(),
+                                String.valueOf(contraseña.getPassword()), "usuario",
+                                telefono.getText(), correo.getText(), mLogueo.oL.getUsuario(), fechaR);
+                        oU.RegistrarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                        oU.Registrar(CREARUSER);
                         Limpiar();
                         oA.aviso("Registro exitoso");
                     } catch (SQLException | ClassNotFoundException ex) {
@@ -71,11 +73,10 @@ public class mRegistroUsuarios extends mGenerales {
                 if (admin.isSelected()) {
                     if (usuario.getText().equals(mLogueo.oL.getUsuario())) {
                         try {
-                            oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
+                            oU = new cAdministradorUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                     String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-                            oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
-                                    usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
-                            oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
+                            oU.Actualizar(mGenerales.ACTUALIZARUSER);
+                            oU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
                             oA.aviso("Inicie sesión nuevamente");
                             fru.dispose();
                             new mLogueo().CargarFrame();
@@ -84,12 +85,10 @@ public class mRegistroUsuarios extends mGenerales {
                         }
                     } else {
                         try {
-                            oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
+                            oU = new cAdministradorUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(), usuario.getText(),
                                     String.valueOf(contraseña.getPassword()), "administrador", telefono.getText(), correo.getText());
-
-                            oRU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
-                            oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
-                                    usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
+                            oU.Actualizar(mGenerales.ACTUALIZARUSER);
+                            oU.ModificarAdmin(usuario.getText(), String.valueOf(contraseña.getPassword()));
                             oA.aviso("Usuario modificado correctamente.");
                             fru.dispose();
                             new mGestionarUsuarios().CargarFrame();
@@ -100,12 +99,11 @@ public class mRegistroUsuarios extends mGenerales {
                 } else {
                     try {
                         //if (user.isSelected())
-                        oU = new cUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(),
+                        oU = new cAdministradorUsuarios(Integer.parseInt(id.getText()), nombres.getText(), apellidos.getText(),
                                 usuario.getText(), String.valueOf(contraseña.getPassword()),
-                                "usuario", telefono.getText(), correo.getText());
-                        oRU.ModificarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
-                        oRU.Actualizar(oU.getTipoUsuario(), mGenerales.ACTUALIZARUSER, nombres.getText(), apellidos.getText(),
-                                usuario.getText(), String.valueOf(contraseña.getPassword()), telefono.getText(), correo.getText(), Integer.parseInt(id.getText()));
+                                "usuario", telefono.getText(), correo.getText());                    
+                        oU.Actualizar(mGenerales.ACTUALIZARUSER);
+                        oU.ModificarUser(usuario.getText(), String.valueOf(contraseña.getPassword()));
                         oA.aviso("Usuario modificado correctamente.");
                         fru.dispose();
                         new mGestionarUsuarios().CargarFrame();

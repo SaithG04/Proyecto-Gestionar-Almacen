@@ -10,7 +10,7 @@ import javax.swing.table.TableModel;
  *
  * @author isai_
  */
-public class cTransaccion extends cSQL {
+public class cAdministradorTransaccion extends cSQL {
 
     private int idTransaccion;
     private String tipoTrans;
