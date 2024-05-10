@@ -61,5 +61,8 @@ CREATE TABLE proveedores(
     PRIMARY KEY (id),
     UNIQUE INDEX (razon_social),
     UNIQUE INDEX (ruc)
-    FORAIGN
+    
 );
+SELECT * FROM usuarios;
+SELECT * from products;
+SELECT p.name, p.marca, u.name as 'creador' from products p right join usuarios u on p.create_by = u.id;

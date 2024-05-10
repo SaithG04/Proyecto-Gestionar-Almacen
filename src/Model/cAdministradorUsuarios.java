@@ -57,10 +57,9 @@ public class cAdministradorUsuarios extends cSQL {
         this.correo = correo;
         setIdAdminAndTime();
     }
-
-    public cAdministradorUsuarios(){
-        
-    }
+    
+    //SOLO INSTANCIAR CLASE PARA USAR SUS METODOS
+    public cAdministradorUsuarios(){}
     
     public String getAdmin() {
         return Admin;

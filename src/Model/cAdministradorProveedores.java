@@ -130,7 +130,6 @@ public class cAdministradorProveedores extends cSQL {
         }
         Finalize();
         return modelo;
-
     }
 
     public DefaultTableModel ModificarProveedor(TableModel model) throws SQLException, ClassNotFoundException {
@@ -167,7 +166,7 @@ public class cAdministradorProveedores extends cSQL {
     public DefaultTableModel InsertarProveedor(TableModel modelo) throws ClassNotFoundException, SQLException {
 
         con = Conectar(mLogueo.oL.getUsuario(), mLogueo.oL.getContraseña());
-        psInsertar = con.prepareStatement("INSERT INTO proveedores(razon_social,ruc,direccion,contacto,telefono,email,departamento) VALUES (?,?,?,?,?,?,?)");
+        psInsertar = con.prepareStatement("INSERT INTO proveedores(razon_social,ruc,direccion,contacto,telefono,email,departamento,id_user,fecha_registro,status) VALUES (?,?,?,?,?,?,?,?,?,?)");
         psInsertar.setString(1, razonSocial);
         psInsertar.setString(2, ruc);
         psInsertar.setString(3, direccion);
@@ -183,6 +182,7 @@ public class cAdministradorProveedores extends cSQL {
             psInsertar.setString(6, email);
         }
         psInsertar.setString(7, departamento);
+        //psInsertar.setInt(8, ); AGREGAR ID USUARIO, FECHA REGISTRO Y ESTADO (ACTIVO O NO)
         psInsertar.executeUpdate();
         DefaultTableModel MostrarProveedores = MostrarProveedores(modelo);
         Finalize();
@@ -209,4 +209,5 @@ public class cAdministradorProveedores extends cSQL {
             rs.close();
         }
     }
+
 }

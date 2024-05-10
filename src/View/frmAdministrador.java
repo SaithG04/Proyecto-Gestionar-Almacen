@@ -179,6 +179,7 @@ public class frmAdministrador extends javax.swing.JFrame {
        //Icono del programa
        return mGenerales.IMG;
     }
+    
     public JButton getBtnCerrarSesion() {
         return btnCerrarSesion;
     }
